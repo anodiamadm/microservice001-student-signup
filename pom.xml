@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.anodiam.services</groupId>
-	<artifactId>JWTAuth</artifactId>
+	<artifactId>StudentSignup</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>JWTAuth</name>
-	<description>JWT Authentication and Authorization for Anodiam Webservices</description>
+	<name>StudentSignup</name>
+	<description>Student Signup Webservice</description>
 	<packaging>jar</packaging>
 	<properties>
 		<java.version>11</java.version>

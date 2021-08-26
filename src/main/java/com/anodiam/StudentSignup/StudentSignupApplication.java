@@ -1,4 +1,4 @@
-package com.anodiam.JWTAuth;
+package com.anodiam.StudentSignup;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
@@ -13,10 +13,10 @@ import org.springframework.context.annotation.Bean;
 
 @EnableEurekaClient
 @SpringBootApplication
-public class JwtAuthApplication {
+public class StudentSignupApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JwtAuthApplication.class, args);
+		SpringApplication.run(StudentSignupApplication.class, args);
 	}
 
 	@Bean
@@ -39,14 +39,14 @@ public class JwtAuthApplication {
 	}
 
 //    We need to redirect from HTTP to HTTPS. Without SSL, this application used
-//    port 4443. With SSL it will use port 8443. So, any request for 4443 needs to be
-//    redirected to HTTPS on 8443.
+//    port 4444. With SSL it will use port 8444. So, any request for 4444 needs to be
+//    redirected to HTTPS on 8444.
     private Connector httpToHttpsRedirectConnector() {
 		Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
 		connector.setScheme("http");
-		connector.setPort(4443);
+		connector.setPort(4444);
 		connector.setSecure(false);
-		connector.setRedirectPort(8443);
+		connector.setRedirectPort(8444);
 		return connector;
 	}
 }

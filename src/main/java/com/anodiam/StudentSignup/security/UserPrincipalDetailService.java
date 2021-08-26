@@ -1,7 +1,7 @@
-package com.anodiam.JWTAuth.security;
+package com.anodiam.StudentSignup.security;
 
-import com.anodiam.JWTAuth.db.UserRepository;
-import com.anodiam.JWTAuth.model.User;
+import com.anodiam.StudentSignup.db.repository.UserRepository;
+import com.anodiam.StudentSignup.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,4 +24,6 @@ public class UserPrincipalDetailService implements UserDetailsService {
 
         return userPrincipal;
     }
+    
+    
 }

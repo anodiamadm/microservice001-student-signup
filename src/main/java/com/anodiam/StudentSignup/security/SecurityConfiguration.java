@@ -1,6 +1,6 @@
-package com.anodiam.JWTAuth.security;
+package com.anodiam.StudentSignup.security;
 
-import com.anodiam.JWTAuth.db.UserRepository;
+import com.anodiam.StudentSignup.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,15 +27,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Value("${jwt.secret}")
     private String SECRET;
 
-    @Value("${jwt.expiration.milliseconds}")
-    private String EXPIRATION_TIME;
-
-    @Value("${jwt.token.prefix}")
-    private String TOKEN_PREFIX;
-
-    @Value("${jwt.header.string}")
-    private String HEADER_STRING;
-
     private UserPrincipalDetailService userPrincipalDetailService;
     private UserRepository userRepository;
     public SecurityConfiguration(UserPrincipalDetailService userPrincipalDetailService,
@@ -56,18 +47,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-//                Add JWT Auth filters in proper order >> 1. JwtAuthenticationFilter >> 2. JwtAuthorizationFilter
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(),
-                           new JwtProperties(SECRET, Integer.parseInt(EXPIRATION_TIME),
-                                                          TOKEN_PREFIX, HEADER_STRING)))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository,
-                           new JwtProperties(SECRET, Integer.parseInt(EXPIRATION_TIME),
-                                                          TOKEN_PREFIX, HEADER_STRING)))
                 .authorizeRequests()
 //                Configure Access Rules
-                .antMatchers("/login").permitAll()
-                .antMatchers("/api/public/management/*").hasRole("MANAGER")
-                .antMatchers("/api/public/admin/*").hasRole("ADMIN");
+                .antMatchers("/studentsignup").permitAll();
     }
 
     @Bean

@@ -1,4 +1,4 @@
-package com.anodiam.JWTAuth.model;
+package com.anodiam.StudentSignup.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "role_mst")
@@ -43,7 +41,6 @@ public class Role {
 		this.roleName = roleName;
 	}
 
-	@JsonBackReference
 	@JsonIgnore
 	public Collection<User> getUserList() {
 		return userList;

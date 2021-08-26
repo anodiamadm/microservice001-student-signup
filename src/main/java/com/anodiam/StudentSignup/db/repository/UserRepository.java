@@ -1,10 +1,11 @@
-package com.anodiam.JWTAuth.db;
+package com.anodiam.StudentSignup.db.repository;
 
-import com.anodiam.JWTAuth.model.User;
+import com.anodiam.StudentSignup.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
+    User findByEmail(String email);
 }
