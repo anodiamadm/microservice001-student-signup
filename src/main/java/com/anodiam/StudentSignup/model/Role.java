@@ -18,8 +18,8 @@ public class Role {
 	private String roleName;
 
 	@ManyToMany(mappedBy = "roleList")
-	@JsonBackReference
-	@JsonIgnore
+//	@JsonBackReference
+//	@JsonIgnore
 	private Collection<User> userList = new ArrayList<>();
 
 	public Role(String roleName) {
@@ -41,8 +41,8 @@ public class Role {
 		this.roleName = roleName;
 	}
 
-	@JsonBackReference
-	@JsonIgnore
+//	@JsonBackReference
+//	@JsonIgnore
 	public Collection<User> getUserList() {
 		return userList;
 	}
