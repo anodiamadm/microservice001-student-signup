@@ -1,6 +1,5 @@
 package com.anodiam.StudentSignup.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -47,7 +46,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonManagedReference
+//    @JsonManagedReference
     private List<Role> roleList = new ArrayList<>();
 
     public User(String username, String firstName, String lastName, String email, String password) {
