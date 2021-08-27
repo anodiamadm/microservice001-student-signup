@@ -8,15 +8,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name = "role_mst")
+@Table(name = "mst_role")
 public class Role {
-	
+
 	@Id
 	@Column(name = "role_id", nullable = false, updatable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long roleId;
 	private String roleName;
-	
+
 	@ManyToMany(mappedBy = "roleList")
 	@JsonBackReference
 	@JsonIgnore
@@ -41,6 +41,7 @@ public class Role {
 		this.roleName = roleName;
 	}
 
+	@JsonBackReference
 	@JsonIgnore
 	public Collection<User> getUserList() {
 		return userList;
