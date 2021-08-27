@@ -31,7 +31,12 @@ public class PublicRestApiController {
     @PostMapping(value = "/studentsignup")
     public ResponseEntity<User> saveStudent(@RequestBody User student) throws Exception {
         try {
-            if(userRepository.findByUsername(student.getUsername())!=null) {
+            if (student.getUsername()==null || student.getPassword()==null || student.getEmail()==null
+                || student.getFirstName()==null || student.getLastName()==null ||
+                    student.getUsername()=="" || student.getPassword()=="" || student.getEmail()==""
+                    || student.getFirstName()=="" || student.getLastName()=="") {
+                return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
+            } else if(userRepository.findByUsername(student.getUsername())!=null) {
                 return new ResponseEntity(HttpStatus.GONE);
             } else if (userRepository.findByEmail(student.getEmail())!=null) {
                 return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
