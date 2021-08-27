@@ -37,7 +37,8 @@ public class PublicRestApiController {
                 return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
             } else {
                 String encodedPassword = passwordEncoder.encode(student.getPassword());
-                User newStudent = new User(student.getUsername(), student.getEmail(), encodedPassword);
+                User newStudent = new User(student.getUsername(), student.getFirstName(),
+                                            student.getLastName(), student.getEmail(), encodedPassword);
                 Role role_user = roleRepository.findByRoleName("USER");
                 newStudent.getRoleList().add(role_user);
                 role_user.getUserList().add(newStudent);
