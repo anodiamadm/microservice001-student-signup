@@ -4,13 +4,10 @@ import com.anodiam.StudentSignup.db.repository.RoleRepository;
 import com.anodiam.StudentSignup.db.repository.UserRepository;
 import com.anodiam.StudentSignup.model.Role;
 import com.anodiam.StudentSignup.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/public")
@@ -31,19 +28,14 @@ public class PublicRestApiController {
     @PostMapping(value = "/studentsignup")
     public ResponseEntity<User> saveStudent(@RequestBody User student) throws Exception {
         try {
-            if (student.getUsername()==null || student.getPassword()==null || student.getEmail()==null
-                || student.getFirstName()==null || student.getLastName()==null ||
-                    student.getUsername()=="" || student.getPassword()=="" || student.getEmail()==""
-                    || student.getFirstName()=="" || student.getLastName()=="") {
-                return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
+            if (student.getUsername()==null || student.getPassword()==null ||
+                    student.getUsername()=="" || student.getPassword()=="") {
+                return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
             } else if(userRepository.findByUsername(student.getUsername())!=null) {
                 return new ResponseEntity(HttpStatus.GONE);
-            } else if (userRepository.findByEmail(student.getEmail())!=null) {
-                return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
             } else {
                 String encodedPassword = passwordEncoder.encode(student.getPassword());
-                User newStudent = new User(student.getUsername(), student.getFirstName(),
-                                            student.getLastName(), student.getEmail(), encodedPassword);
+                User newStudent = new User(student.getUsername(), encodedPassword);
                 Role role_user = roleRepository.findByRoleName("USER");
                 newStudent.getRoleList().add(role_user);
                 role_user.getUserList().add(newStudent);
