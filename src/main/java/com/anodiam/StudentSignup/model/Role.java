@@ -1,20 +1,25 @@
 package com.anodiam.StudentSignup.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+//import com.fasterxml.jackson.annotation.JsonBackReference;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name = "mst_role")
+@Table(name = "mst_role",
+		uniqueConstraints={@UniqueConstraint(name="uk_role_name", columnNames="role_name")},
+		indexes={@Index(name="idx_role_name", columnList="role_name")})
 public class Role {
 
 	@Id
 	@Column(name = "role_id", nullable = false, updatable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long roleId;
+	private BigInteger roleId;
+
+	@Column(name = "role_name", nullable = false, updatable = false, length = 255)
 	private String roleName;
 
 	@ManyToMany(mappedBy = "roleList")
@@ -29,7 +34,11 @@ public class Role {
 	public Role() {
 	}
 
-	public Long getRoleId() {
+	public void setRoleId(BigInteger roleId) {
+		this.roleId = roleId;
+	}
+
+	public BigInteger getRoleId() {
 		return roleId;
 	}
 
