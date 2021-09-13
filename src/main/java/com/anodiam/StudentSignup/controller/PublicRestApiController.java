@@ -25,7 +25,9 @@ public class PublicRestApiController {
         this.passwordEncoder = passwordEncoder;
     }
 
+//  REVIEW COMMENT::  TRY - CATCH needs to narrow down to specific exception instead of just EXCEPTION
     @PostMapping(value = "/studentsignup")
+    @ResponseBody
     public ResponseEntity<User> saveStudent(@RequestBody User student) throws Exception {
         try {
             if (student.getUsername()==null || student.getPassword()==null ||
