@@ -25,7 +25,7 @@ public class PublicRestApiController {
         this.passwordEncoder = passwordEncoder;
     }
 
-//  REVIEW COMMENT::  TRY - CATCH needs to narrow down to specific exception instead of just EXCEPTION
+//  @PostMapping("studentsignup") :: Register New user with username & password
     @PostMapping(value = "/studentsignup")
     @ResponseBody
     public ResponseEntity<User> saveStudent(@RequestBody User student) throws Exception {
