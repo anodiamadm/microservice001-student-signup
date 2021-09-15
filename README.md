@@ -1,2 +1,6 @@
-# microservice001-student-signup
-Microservice for Student Signup
+# microservice001-student-signup 
+## API End Points
+
+### POST :: /api/public/
+	studentsignup :: Register New user with username & password
+
