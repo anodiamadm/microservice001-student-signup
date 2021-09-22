@@ -1,6 +1,6 @@
 package com.anodiam.StudentSignup.security;
 
-import com.anodiam.StudentSignup.db.repository.UserRepository;
+import com.anodiam.StudentSignup.serviceRepository.User.UserRepository;
 import com.anodiam.StudentSignup.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

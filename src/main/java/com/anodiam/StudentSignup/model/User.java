@@ -1,5 +1,6 @@
 package com.anodiam.StudentSignup.model;
 
+import com.anodiam.StudentSignup.model.common.MessageResponse;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -37,6 +38,9 @@ public class User {
 //    @JsonManagedReference
     private List<Role> roleList = new ArrayList<>();
 
+    @Transient
+    private MessageResponse messageResponse;
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
@@ -44,11 +48,19 @@ public class User {
         this.dateCreated = new Date();
     }
 
+    protected User(){}
+
+    public MessageResponse getMessageResponse() {
+        return messageResponse;
+    }
+
+    public void setMessageResponse(MessageResponse messageResponse) {
+        this.messageResponse = messageResponse;
+    }
+
     public void setUserId(BigInteger userId) {
         this.userId = userId;
     }
-
-    protected User(){}
 
     public Date getDateCreated() {
         return dateCreated;

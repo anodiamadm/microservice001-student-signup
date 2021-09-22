@@ -1,4 +1,4 @@
-package com.anodiam.StudentSignup.db.repository;
+package com.anodiam.StudentSignup.serviceRepository.Role;
 
 import com.anodiam.StudentSignup.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
