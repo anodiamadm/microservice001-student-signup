@@ -26,8 +26,7 @@ class UserServiceDal extends UserServiceImpl {
     @Override
     public User findByUsername(String username) {
         try {
-            User user = userRepository.findByUsername(username);
-            return user;
+            return userRepository.findByUsername(username);
         } catch (Exception exception) {
             exception.printStackTrace();
         }
