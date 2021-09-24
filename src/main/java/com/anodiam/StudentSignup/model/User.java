@@ -11,31 +11,23 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "mst_user",
-        uniqueConstraints={@UniqueConstraint(name="uk_username", columnNames="username")},
-        indexes={@Index(name="idx_username", columnList="username")})
+@Table(name = "mst_user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
     private BigInteger userId;
 
-    @Column(nullable = false)
     private int active;
 
-    @Column(nullable = false, name="date_created")
     private Date dateCreated;
 
-    @Column(nullable = false, length = 511)
     private String password;
 
-    @Column(nullable = false, length = 255)
     private String username;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-//    @JsonManagedReference
     private List<Role> roleList = new ArrayList<>();
 
     @Transient
