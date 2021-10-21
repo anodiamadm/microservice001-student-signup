@@ -5,6 +5,7 @@ import com.anodiam.StudentSignup.model.User;
 import com.anodiam.StudentSignup.model.common.MessageResponse;
 import com.anodiam.StudentSignup.model.common.ResponseCode;
 import com.anodiam.StudentSignup.serviceRepository.Role.RoleRepository;
+import com.anodiam.StudentSignup.serviceRepository.errorHandling.ErrorHandlingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ class UserServiceDal extends UserServiceImpl {
     private RoleRepository roleRepository;
 
     @Autowired
+    private ErrorHandlingService errorHandlingService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public UserServiceDal(){}
@@ -37,20 +41,14 @@ class UserServiceDal extends UserServiceImpl {
     }
 
     @Override
-    public User save(User student) {
-        System.out.println("Inside Save");
+    public User save(User student)
+    {
         try
         {
             if(student.getUsername().trim().length() == 0)
             {
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
                         "User name cannot be blank!"));
-                return student;
-            }
-            if (userRepository.findByUsername(student.getUsername())!=null)
-            {
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        "User name already exist!"));
                 return student;
             }
             if (!isValidPassword(student.getPassword()))
@@ -67,6 +65,7 @@ class UserServiceDal extends UserServiceImpl {
             }
 
             String encodedPassword = passwordEncoder.encode(student.getPassword());
+
             User studentToSave = new User(student.getUsername(), encodedPassword,student.getEmail());
             Role role_user = roleRepository.findByRoleName("USER");
             studentToSave.getRoleList().add(role_user);
@@ -76,10 +75,10 @@ class UserServiceDal extends UserServiceImpl {
                     "User Signup Saved Successfully!"));
             return studentToSave;
 
-        } catch (Exception exception) {
+        } catch (Exception exception)
+        {
             exception.printStackTrace();
-            student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                    "Student Save Failed with Message: " + exception.getMessage()));
+            student.setMessageResponse(errorHandlingService.GetErrorMessage(exception.getMessage()));
             return student;
         }
     }

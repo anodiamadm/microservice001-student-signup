@@ -1,8 +1,6 @@
 package com.anodiam.StudentSignup;
 
 import com.anodiam.StudentSignup.model.User;
-import com.anodiam.StudentSignup.model.common.MessageResponse;
-import com.anodiam.StudentSignup.model.common.ResponseCode;
 import com.anodiam.StudentSignup.serviceRepository.User.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +32,6 @@ class JwtAuthApplicationTests {
 	}
 
 	@Test
-	public void testByDuplicateUserName() throws Exception {
-		User expectedStudent=userService.save(new User("sourav","sourav123","sourav@gmail.com"));
-		assertEquals(expectedStudent.getMessageResponse().getMessage(), "User name already exist!");
-	}
-
-	@Test
 	public void testByInvalidPassword() throws Exception {
 		User expectedStudent=userService.save(new User("sourav1","sourav123","sourav@gmail.com"));
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Invalid Password!");
@@ -50,5 +42,4 @@ class JwtAuthApplicationTests {
 		User expectedStudent=userService.save(new User("sourav1","sourav123@#X","sourav @gmail.com"));
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Invalid Email Id!");
 	}
-
 }
