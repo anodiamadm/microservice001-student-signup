@@ -27,14 +27,28 @@ class JwtAuthApplicationTests {
 		assertEquals(expectedValue, actualValue);
 	}
 
-	/*@Test
-	public void testNewUser() throws Exception {
+	@Test
+	public void testByBlankUserName() throws Exception {
+		User expectedStudent=userService.save(new User("","sourav123","sourav@gmail.com"));
+		assertEquals(expectedStudent.getMessageResponse().getMessage(), "User name cannot be blank!");
+	}
 
+	@Test
+	public void testByDuplicateUserName() throws Exception {
 		User expectedStudent=userService.save(new User("sourav","sourav123","sourav@gmail.com"));
+		assertEquals(expectedStudent.getMessageResponse().getMessage(), "User name already exist!");
+	}
 
-		User actualStudent=userService.save(new User("sourav","sourav123","sourav@gmail.com"));
+	@Test
+	public void testByInvalidPassword() throws Exception {
+		User expectedStudent=userService.save(new User("sourav1","sourav123","sourav@gmail.com"));
+		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Invalid Password!");
+	}
 
-		assertEquals(expectedStudent.getMessageResponse(), actualStudent.getMessageResponse());
-	}*/
+	@Test
+	public void testByInvalidEmail() throws Exception {
+		User expectedStudent=userService.save(new User("sourav1","sourav123@#X","sourav @gmail.com"));
+		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Invalid Email Id!");
+	}
 
 }
