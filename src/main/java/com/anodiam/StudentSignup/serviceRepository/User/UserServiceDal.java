@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 class UserServiceDal extends UserServiceImpl {
 
@@ -35,30 +38,91 @@ class UserServiceDal extends UserServiceImpl {
 
     @Override
     public User save(User student) {
-        MessageResponse messageResponse = new MessageResponse();
-        try {
-            if (student.getUsername()!="" && student.getPassword()!=""
-                        && userRepository.findByUsername(student.getUsername())==null){
-                String encodedPassword = passwordEncoder.encode(student.getPassword());
-                User studentToSave = new User(student.getUsername(), encodedPassword);
-                Role role_user = roleRepository.findByRoleName("USER");
-                studentToSave.getRoleList().add(role_user);
-                role_user.getUserList().add(studentToSave);
-                userRepository.save(studentToSave);
-                messageResponse = new MessageResponse(ResponseCode.SUCCESS.getID(),
-                        "User Signup Saved Successfully!");
-                studentToSave.setMessageResponse(messageResponse);
-                return studentToSave;
-            } else {
-                messageResponse = new MessageResponse(ResponseCode.FAILURE.getID(),
-                        "User Invalid. Not saved!");
-                student.setMessageResponse(messageResponse);
+        System.out.println("Inside Save");
+        try
+        {
+            if(student.getUsername().trim().length() == 0)
+            {
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
+                        "User name cannot be blank!"));
+                return student;
             }
+            if (userRepository.findByUsername(student.getUsername())!=null)
+            {
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
+                        "User name already exist!"));
+                return student;
+            }
+            if (!isValidPassword(student.getPassword()))
+            {
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
+                        "Invalid Password!"));
+                return student;
+            }
+            if (!isValidEmail(student.getEmail()))
+            {
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
+                        "Invalid Email Id!"));
+                return student;
+            }
+
+            String encodedPassword = passwordEncoder.encode(student.getPassword());
+            User studentToSave = new User(student.getUsername(), encodedPassword,student.getEmail());
+            Role role_user = roleRepository.findByRoleName("USER");
+            studentToSave.getRoleList().add(role_user);
+            role_user.getUserList().add(studentToSave);
+            userRepository.save(studentToSave);
+            studentToSave.setMessageResponse(new MessageResponse(ResponseCode.SUCCESS.getID(),
+                    "User Signup Saved Successfully!"));
+            return studentToSave;
+
         } catch (Exception exception) {
             exception.printStackTrace();
-            messageResponse = new MessageResponse(ResponseCode.FAILURE.getID(),
-                    "Student Save Failed with Message: " + exception.getMessage());
+            student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
+                    "Student Save Failed with Message: " + exception.getMessage()));
+            return student;
         }
-        return student;
     }
+
+    private  static boolean isValidPassword(String password)
+    {
+
+        // Regex to check valid password.
+        String regex = "^(?=.*[0-9])"
+                + "(?=.*[a-z])(?=.*[A-Z])"
+                + "(?=.*[@#$%^&+=])"
+                + "(?=\\S+$).{8,20}$";
+
+        // Compile the ReGex
+        Pattern p = Pattern.compile(regex);
+
+        // If the password is empty
+        // return false
+        if (password == null) {
+            return false;
+        }
+
+        // Pattern class contains matcher() method
+        // to find matching between given password
+        // and regular expression.
+        Matcher m = p.matcher(password);
+
+        // Return if the password
+        // matched the ReGex
+        return m.matches();
+    }
+
+    public static boolean isValidEmail(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
+
 }
