@@ -32,6 +32,12 @@ class JwtAuthApplicationTests {
 	}
 
 	@Test
+	public void testByDuplicateUserName() throws Exception {
+		User expectedStudent=userService.save(new User("nitish","nitish67$#LB1","nitish@gmail.com"));
+		assertEquals(expectedStudent.getMessageResponse().getMessage(), "User name already exists!");
+	}
+
+	@Test
 	public void testByInvalidPassword() throws Exception {
 		User expectedStudent=userService.save(new User("sourav1","sourav123","sourav@gmail.com"));
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Invalid Password!");
@@ -41,5 +47,11 @@ class JwtAuthApplicationTests {
 	public void testByInvalidEmail() throws Exception {
 		User expectedStudent=userService.save(new User("sourav1","sourav123@#X","sourav @gmail.com"));
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Invalid Email Id!");
+	}
+
+	@Test
+	public void testByDuplicateEmail() throws Exception {
+		User expectedStudent=userService.save(new User("harish","harishsh67$#LB1","nitish@gmail.com"));
+		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Email already exists!");
 	}
 }

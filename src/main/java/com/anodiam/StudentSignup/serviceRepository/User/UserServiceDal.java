@@ -51,6 +51,14 @@ class UserServiceDal extends UserServiceImpl {
                         "User name cannot be blank!"));
                 return student;
             }
+            String enocdedUserName=new TrippleDes().encrypt(student.getUsername());
+            if(userRepository.findByUsername(enocdedUserName) !=null)
+            {
+                student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
+                        "User name already exists!"));
+                return student;
+            }
+
             if (!isValidPassword(student.getPassword()))
             {
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
@@ -64,9 +72,16 @@ class UserServiceDal extends UserServiceImpl {
                 return student;
             }
 
-            String encodedPassword = passwordEncoder.encode(student.getPassword());
+            String enocdedEmail=new TrippleDes().encrypt(student.getEmail());
+            if(userRepository.findByEmail(enocdedEmail) !=null)
+            {
+                student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
+                        "Email already exists!"));
+                return student;
+            }
 
-            User studentToSave = new User(student.getUsername(), encodedPassword,student.getEmail());
+            String encodedPassword = passwordEncoder.encode(student.getPassword());
+            User studentToSave = new User(enocdedUserName, encodedPassword,enocdedEmail);
             Role role_user = roleRepository.findByRoleName("USER");
             studentToSave.getRoleList().add(role_user);
             role_user.getUserList().add(studentToSave);
