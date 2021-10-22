@@ -51,7 +51,7 @@ class UserServiceDal extends UserServiceImpl {
                         "User name cannot be blank!"));
                 return student;
             }
-            String enocdedUserName=new TrippleDes().encrypt(student.getUsername());
+            String enocdedUserName=new GeneralEncoderDecoder().encrypt(student.getUsername());
             if(userRepository.findByUsername(enocdedUserName) !=null)
             {
                 student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
@@ -72,7 +72,7 @@ class UserServiceDal extends UserServiceImpl {
                 return student;
             }
 
-            String enocdedEmail=new TrippleDes().encrypt(student.getEmail());
+            String enocdedEmail=new GeneralEncoderDecoder().encrypt(student.getEmail());
             if(userRepository.findByEmail(enocdedEmail) !=null)
             {
                 student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
