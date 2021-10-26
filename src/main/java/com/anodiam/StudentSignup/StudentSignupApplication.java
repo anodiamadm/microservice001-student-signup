@@ -16,11 +16,13 @@ import org.springframework.context.annotation.Bean;
 public class StudentSignupApplication {
 
 	public static void main(String[] args) {
+		System.out.println("Inside main()");
 		SpringApplication.run(StudentSignupApplication.class, args);
 	}
 
 	@Bean
 	public ServletWebServerFactory servletContainer() {
+		System.out.println("Inside servletContainer()");
 //		 Enable SSL Trafic
 		TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
 			@Override
@@ -42,6 +44,7 @@ public class StudentSignupApplication {
 //    port 4444. With SSL it will use port 8444. So, any request for 4444 needs to be
 //    redirected to HTTPS on 8444.
     private Connector httpToHttpsRedirectConnector() {
+		System.out.println("Inside httpToHttpsRedirectConnector()");
 		Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
 		connector.setScheme("http");
 		connector.setPort(4444);

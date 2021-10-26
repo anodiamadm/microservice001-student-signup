@@ -1,6 +1,7 @@
 package com.anodiam.StudentSignup;
 
 import com.anodiam.StudentSignup.model.User;
+import com.anodiam.StudentSignup.serviceRepository.User.GeneralEncoderDecoder;
 import com.anodiam.StudentSignup.serviceRepository.User.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,26 +33,39 @@ class JwtAuthApplicationTests {
 	}
 
 	@Test
-	public void testByDuplicateUserName() throws Exception {
-		User expectedStudent=userService.save(new User("nitish","nitish67$#LB1","nitish@gmail.com"));
+	public void testByInvalidLengthUserName() throws Exception {
+		User expectedStudent=userService.save(new User("vinay","vinay%6U23L","sourav@gmail.com"));
+		assertEquals(expectedStudent.getMessageResponse().getMessage(), "User name cannot be less than eight characters!");
+	}
+
+	@Test
+	public void testByDuplicateUserName() throws Exception
+	{
+		String userName=new GeneralEncoderDecoder().encrypt("nitishkumar");
+
+		if (userService.findByUsername(userName)==null)
+		{
+			User newStudent=userService.save(new User("nitishkumar","nitishK67$#LB1","nitishkum@gmail.com"));
+		}
+		User expectedStudent=userService.save(new User("nitishkumar","nitish67$#LB1","nitishk@gmail.com"));
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "User name already exists!");
 	}
 
 	@Test
 	public void testByInvalidPassword() throws Exception {
-		User expectedStudent=userService.save(new User("sourav1","sourav123","sourav@gmail.com"));
+		User expectedStudent=userService.save(new User("souravkumar","sourav123","sourav@gmail.com"));
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Invalid Password!");
 	}
 
 	@Test
 	public void testByInvalidEmail() throws Exception {
-		User expectedStudent=userService.save(new User("sourav1","sourav123@#X","sourav @gmail.com"));
+		User expectedStudent=userService.save(new User("souravkumar","sourav123@#X","sourav @gmail.com"));
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Invalid Email Id!");
 	}
 
 	@Test
 	public void testByDuplicateEmail() throws Exception {
-		User expectedStudent=userService.save(new User("harish","harishsh67$#LB1","nitish@gmail.com"));
+		User expectedStudent=userService.save(new User("harishkumar","harishsh67$#LB1","nitish@gmail.com"));
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Email already exists!");
 	}
 }

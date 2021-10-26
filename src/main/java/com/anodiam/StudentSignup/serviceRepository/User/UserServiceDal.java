@@ -51,6 +51,12 @@ class UserServiceDal extends UserServiceImpl {
                         "User name cannot be blank!"));
                 return student;
             }
+            if(student.getUsername().trim().length() < 8)
+            {
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
+                        "User name cannot be less than eight characters!"));
+                return student;
+            }
             String enocdedUserName=new GeneralEncoderDecoder().encrypt(student.getUsername());
             if(userRepository.findByUsername(enocdedUserName) !=null)
             {
