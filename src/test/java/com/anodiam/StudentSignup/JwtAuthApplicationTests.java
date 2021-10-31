@@ -41,13 +41,17 @@ class JwtAuthApplicationTests {
 	@Test
 	public void testByDuplicateUserName() throws Exception
 	{
-		String userName=new GeneralEncoderDecoder().encrypt("nitishkumar");
+		String userName="Dhirajkumar";
+		String enocdedUserName=new GeneralEncoderDecoder().encrypt(userName);
+		String userPassword="dhiraj67$#LB1";
+		String userEmail="dhiraj@gmail.com";
+		User inputUser=new User(userName,userPassword,userEmail);
 
-		if (userService.findByUsername(userName)==null)
+		if (userService.findByUsername(enocdedUserName)==null)
 		{
-			User newStudent=userService.save(new User("nitishkumar","nitishK67$#LB1","nitishkum@gmail.com"));
+			User newStudent = userService.save(inputUser);
 		}
-		User expectedStudent=userService.save(new User("nitishkumar","nitish67$#LB1","nitishk@gmail.com"));
+		User expectedStudent=userService.save(inputUser);
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "User name already exists!");
 	}
 
@@ -64,8 +68,25 @@ class JwtAuthApplicationTests {
 	}
 
 	@Test
-	public void testByDuplicateEmail() throws Exception {
-		User expectedStudent=userService.save(new User("harishkumar","harishsh67$#LB1","nitish@gmail.com"));
+	public void testByDuplicateEmail() throws Exception
+	{
+		String userName="Dhirajkumar";
+		String enocdedUserName=new GeneralEncoderDecoder().encrypt(userName);
+		String userPassword="dhiraj67$#LB1";
+		String userEmail="dhiraj@gmail.com";
+		User inputUser=new User(userName,userPassword,userEmail);
+
+		if (userService.findByUsername(enocdedUserName)==null)
+		{
+			User newStudent = userService.save(inputUser);
+		}
+
+		userName="parijatkumar";
+		userPassword="parij67$#LB1";
+		userEmail="dhiraj@gmail.com";
+		User anotherUser=new User(userName,userPassword,userEmail);
+
+		User expectedStudent=userService.save(anotherUser);
 		assertEquals(expectedStudent.getMessageResponse().getMessage(), "Email already exists!");
 	}
 }
