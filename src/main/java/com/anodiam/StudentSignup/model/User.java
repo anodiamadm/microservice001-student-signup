@@ -35,7 +35,7 @@ public class User {
     @Transient
     private MessageResponse messageResponse;
 
-    public User(String username, String password,String email) {
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.active=1;
