@@ -4,6 +4,7 @@ import com.anodiam.StudentSignup.model.Role;
 import com.anodiam.StudentSignup.model.User;
 import com.anodiam.StudentSignup.model.common.MessageResponse;
 import com.anodiam.StudentSignup.model.common.ResponseCode;
+import com.anodiam.StudentSignup.serviceRepository.Message.MessageService;
 import com.anodiam.StudentSignup.serviceRepository.Role.RoleRepository;
 import com.anodiam.StudentSignup.serviceRepository.errorHandling.ErrorHandlingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ class UserServiceDal extends UserServiceImpl {
     private ErrorHandlingService errorHandlingService;
 
     @Autowired
+    private MessageService messageService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public UserServiceDal(){}
@@ -45,46 +49,78 @@ class UserServiceDal extends UserServiceImpl {
     @Override
     public User save(User student)
     {
+        String returnMessage="";
         try
         {
             if(student.getUsername().trim().length() == 0)
             {
+                returnMessage=messageService.showMessage(1,"STUDENT_USERNAME_BLANK");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        "User name cannot be blank!"));
+                        returnMessage));
                 return student;
             }
             if(student.getUsername().trim().length() < 8)
             {
+                returnMessage=messageService.showMessage(1,"STUDENT_USERNAME_MIN_LENGTH");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        "User name cannot be less than eight characters!"));
-                return student;
-            }
-            String enocdedUserName=new GeneralEncoderDecoder().encrypt(student.getUsername());
-            if(userRepository.findByUsername(enocdedUserName) !=null)
-            {
-                student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
-                        "User name already exists!"));
+                        returnMessage));
                 return student;
             }
 
+            if(student.getPassword().trim().length() < 8)
+            {
+                returnMessage=messageService.showMessage(1,"STUDENT_PASSWORD_MIN_LENGTH");
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
+                return student;
+            }
+            if(student.getPassword().trim().length() > 20)
+            {
+                returnMessage=messageService.showMessage(1,"STUDENT_PASSWORD_MAX_LENGTH");
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
+                return student;
+            }
+            if(student.getPassword().contains(student.getUsername()))
+            {
+                returnMessage=messageService.showMessage(1,"STUDENT_PASSWORD_CONTAIN_USERNAME");
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
+                return student;
+            }
+            if(student.getPassword().contains(student.getEmail()))
+            {
+                returnMessage=messageService.showMessage(1,"STUDENT_PASSWORD_CONTAIN_EMAIL");
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
+                return student;
+            }
             if (!isValidPassword(student.getPassword()))
             {
+                returnMessage=messageService.showMessage(1,"STUDENT_INVALID_PASSWORD");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        "Invalid Password!"));
+                        returnMessage));
                 return student;
             }
             if (!isValidEmail(student.getEmail()))
             {
+                returnMessage=messageService.showMessage(1,"STUDENT_INVALID_EMAIL_ADDRESS");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        "Invalid Email Id!"));
+                        returnMessage));
+                return student;
+            }
+
+            String enocdedUserName=new GeneralEncoderDecoder().encrypt(student.getUsername());
+            if(userRepository.findByUsername(enocdedUserName) !=null)
+            {
+                returnMessage=messageService.showMessage(1,"STUDENT_DUPLICATE_USERNAME");
+                student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
+                        returnMessage));
                 return student;
             }
 
             String enocdedEmail=new GeneralEncoderDecoder().encrypt(student.getEmail());
             if(userRepository.findByEmail(enocdedEmail) !=null)
             {
+                returnMessage=messageService.showMessage(1,"STUDENT_DUPLICATE_EMAIL_ADDRESS");
                 student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
-                        "Email already exists!"));
+                        returnMessage));
                 return student;
             }
 
@@ -94,8 +130,9 @@ class UserServiceDal extends UserServiceImpl {
             studentToSave.getRoleList().add(role_user);
             role_user.getUserList().add(studentToSave);
             userRepository.save(studentToSave);
+            returnMessage=messageService.showMessage(1,"STUDENT_SAVE_SUCCESS");
             studentToSave.setMessageResponse(new MessageResponse(ResponseCode.SUCCESS.getID(),
-                    "User Signup Saved Successfully!"));
+                    returnMessage));
             return studentToSave;
 
         } catch (Exception exception)
