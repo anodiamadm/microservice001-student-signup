@@ -85,12 +85,6 @@ class UserServiceDal extends UserServiceImpl {
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
                 return student;
             }
-            if(student.getPassword().contains(student.getEmail()))
-            {
-                returnMessage=messageService.showMessage(1,"STUDENT_PASSWORD_CONTAIN_EMAIL");
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
-                return student;
-            }
             if (!isValidPassword(student.getPassword()))
             {
                 returnMessage=messageService.showMessage(1,"STUDENT_INVALID_PASSWORD");

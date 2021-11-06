@@ -93,20 +93,6 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//	password containing "email" string,I should not be able to register.
-	//	"Student registration failure! Invalid password containing email."
-	/*@Test
-	public void testNegativePasswordContainsEmail() throws Exception
-	{
-		String userName="santoshroy";
-		String email="happyroy@gmail.com";
-		String password="happyroy90";
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(1,"STUDENT_PASSWORD_CONTAIN_EMAIL");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}*/
-
 	//	password NOT containing small alphabet (a-z),I should not be able to register.
 	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z), at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character among (@,#,$,%,^,&,+,=)"
 	@Test
