@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class StudentSignupApplication {
 
+	public static int languageId = 1;
 	public static void main(String[] args) {
 		System.out.println("Inside main()");
 		SpringApplication.run(StudentSignupApplication.class, args);

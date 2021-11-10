@@ -1,5 +1,6 @@
 package com.anodiam.StudentSignup.serviceRepository.User;
 
+import com.anodiam.StudentSignup.StudentSignupApplication;
 import com.anodiam.StudentSignup.model.Role;
 import com.anodiam.StudentSignup.model.User;
 import com.anodiam.StudentSignup.model.common.MessageResponse;
@@ -49,19 +50,20 @@ class UserServiceDal extends UserServiceImpl {
     @Override
     public User save(User student)
     {
+        int languageId= StudentSignupApplication.languageId;
         String returnMessage="";
         try
         {
             if(student.getUsername().trim().length() == 0)
             {
-                returnMessage=messageService.showMessage(1,"STUDENT_USERNAME_BLANK");
+                returnMessage=messageService.showMessage(languageId,"STUDENT_USERNAME_BLANK");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
                         returnMessage));
                 return student;
             }
             if(student.getUsername().trim().length() < 8)
             {
-                returnMessage=messageService.showMessage(1,"STUDENT_USERNAME_MIN_LENGTH");
+                returnMessage=messageService.showMessage(languageId,"STUDENT_USERNAME_MIN_LENGTH");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
                         returnMessage));
                 return student;
@@ -69,32 +71,32 @@ class UserServiceDal extends UserServiceImpl {
 
             if(student.getPassword().trim().length() < 8)
             {
-                returnMessage=messageService.showMessage(1,"STUDENT_PASSWORD_MIN_LENGTH");
+                returnMessage=messageService.showMessage(languageId,"STUDENT_PASSWORD_MIN_LENGTH");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
                 return student;
             }
             if(student.getPassword().trim().length() > 20)
             {
-                returnMessage=messageService.showMessage(1,"STUDENT_PASSWORD_MAX_LENGTH");
+                returnMessage=messageService.showMessage(languageId,"STUDENT_PASSWORD_MAX_LENGTH");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
                 return student;
             }
             if(student.getPassword().contains(student.getUsername()))
             {
-                returnMessage=messageService.showMessage(1,"STUDENT_PASSWORD_CONTAIN_USERNAME");
+                returnMessage=messageService.showMessage(languageId,"STUDENT_PASSWORD_CONTAIN_USERNAME");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
                 return student;
             }
             if (!isValidPassword(student.getPassword()))
             {
-                returnMessage=messageService.showMessage(1,"STUDENT_INVALID_PASSWORD");
+                returnMessage=messageService.showMessage(languageId,"STUDENT_INVALID_PASSWORD");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
                         returnMessage));
                 return student;
             }
             if (!isValidEmail(student.getEmail()))
             {
-                returnMessage=messageService.showMessage(1,"STUDENT_INVALID_EMAIL_ADDRESS");
+                returnMessage=messageService.showMessage(languageId,"STUDENT_INVALID_EMAIL_ADDRESS");
                 student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
                         returnMessage));
                 return student;
@@ -103,7 +105,7 @@ class UserServiceDal extends UserServiceImpl {
             String enocdedUserName=new GeneralEncoderDecoder().encrypt(student.getUsername());
             if(userRepository.findByUsername(enocdedUserName) !=null)
             {
-                returnMessage=messageService.showMessage(1,"STUDENT_DUPLICATE_USERNAME");
+                returnMessage=messageService.showMessage(languageId,"STUDENT_DUPLICATE_USERNAME");
                 student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
                         returnMessage));
                 return student;
@@ -112,7 +114,7 @@ class UserServiceDal extends UserServiceImpl {
             String enocdedEmail=new GeneralEncoderDecoder().encrypt(student.getEmail());
             if(userRepository.findByEmail(enocdedEmail) !=null)
             {
-                returnMessage=messageService.showMessage(1,"STUDENT_DUPLICATE_EMAIL_ADDRESS");
+                returnMessage=messageService.showMessage(languageId,"STUDENT_DUPLICATE_EMAIL_ADDRESS");
                 student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
                         returnMessage));
                 return student;
@@ -124,7 +126,7 @@ class UserServiceDal extends UserServiceImpl {
             studentToSave.getRoleList().add(role_user);
             role_user.getUserList().add(studentToSave);
             userRepository.save(studentToSave);
-            returnMessage=messageService.showMessage(1,"STUDENT_SAVE_SUCCESS");
+            returnMessage=messageService.showMessage(languageId,"STUDENT_SAVE_SUCCESS");
             studentToSave.setMessageResponse(new MessageResponse(ResponseCode.SUCCESS.getID(),
                     returnMessage));
             return studentToSave;
