@@ -7,6 +7,7 @@ import com.anodiam.StudentSignup.serviceRepository.User.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.*;
 
@@ -257,17 +258,28 @@ class JwtAuthApplicationTests {
 	@Test
 	public void testPositiveSuccessfulRegistration() throws Exception
 	{
-		String userName="amartydas";
-		String enocdedUserName=new GeneralEncoderDecoder().encrypt(userName);
-		String email="amartya.das@gmail.com";
+		String randomNumber=GenerateRandomNumber();
+		String userName="adas".concat(randomNumber);
+		String preFixEmail="abc".concat(randomNumber.substring(1,6));
+		String email=preFixEmail.concat(".das@gmail.com");
 		String password="klngxc@12AB";
 
-		if (userService.findByUsername(enocdedUserName)==null)
+		User inputUser=new User(userName, password, email);
+		User newStudent = userService.save(inputUser);
+		String returnMessage=messageService.showMessage(1,"STUDENT_SAVE_SUCCESS");
+		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
+	}
+
+	private String GenerateRandomNumber()
+	{
+		try
 		{
-			User inputUser=new User(userName, password, email);
-			User newStudent = userService.save(inputUser);
-			String returnMessage=messageService.showMessage(1,"STUDENT_SAVE_SUCCESS");
-			assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
+			return String.valueOf(ThreadLocalRandom.current().nextInt());
+		}catch(Exception ex)
+		{
+			System.out.println(ex.getMessage());
+			return "";
 		}
 	}
+
 }
