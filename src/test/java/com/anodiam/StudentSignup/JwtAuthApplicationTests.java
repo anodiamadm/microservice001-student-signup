@@ -232,21 +232,22 @@ class JwtAuthApplicationTests {
 	@Test
 	public void testNegativeDuplicateEmail() throws Exception
 	{
-		String userName="Dhirajkumar";
-		String enocdedUserName=new GeneralEncoderDecoder().encrypt(userName);
-		String userPassword="dhiraj67$#LB1";
-		String userEmail="dhiraj@gmail.com";
-		User inputUser=new User(userName,userPassword,userEmail);
+		String randomNumber=GenerateRandomNumber();
+		String userName="adas".concat(randomNumber);
+		String preFixEmail="abc".concat(randomNumber.substring(1,6));
+		String email=preFixEmail.concat(".das@gmail.com");
+		String password="klngxc@12AB";
 
+		User inputUser=new User(userName,password,email);
+		String enocdedUserName=new GeneralEncoderDecoder().encrypt(userName);
 		if (userService.findByUsername(enocdedUserName)==null)
 		{
 			User firstStudent = userService.save(inputUser);
 		}
 
-		userName="pinakidas";
-		userPassword="pinaki4*67$#LB1";
-		userEmail="dhiraj@gmail.com";
-		inputUser=new User(userName,userPassword,userEmail);
+		userName="phjk".concat(randomNumber);
+		password="hgtyu@12AB";
+		inputUser=new User(userName,password,email);
 
 		User newStudent=userService.save(inputUser);
 		String returnMessage=messageService.showMessage(languageId,"STUDENT_DUPLICATE_EMAIL_ADDRESS");
