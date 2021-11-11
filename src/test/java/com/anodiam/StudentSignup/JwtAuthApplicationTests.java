@@ -25,22 +25,31 @@ class JwtAuthApplicationTests {
 	void contextLoads() {
 	}
 
-	//*******************************************************************************************
+//*******************************************************************************************
 //	JUNIT TEST CASES for microservice001-student-signup Test Based Development Starts Here
 //*******************************************************************************************
+//	****** Test case numbers are as per USECASE# from Product Backlog for traceability ******
 //	Following JUnits need to pass at Dev environment to be deployed to Test environment
 
-	//	Use Case 1.1: If username is blank, I should NOT be able to register. I should get the message
-	//	"Student registration failure! Username should be 8 + chars long!".
+	//	Use Case 3: Enter valid user,email and password, I should be able to register.
+	//	I should get the message "Student registration successful!".
 	@Test
-	public void testNegativeBlankUserName() throws Exception {
-		User expectedStudent=userService.save(new User("","sourav123","sourav@gmail.com"));
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_USERNAME_BLANK");
-		assertEquals(expectedStudent.getMessageResponse().getMessage(),returnMessage);
+	public void testPositiveSuccessfulRegistration() throws Exception
+	{
+		String randomNumber=GenerateRandomNumber();
+		String userName="adas".concat(randomNumber);
+		String preFixEmail="abc".concat(randomNumber.substring(1,6));
+		String email=preFixEmail.concat(".das@gmail.com");
+		String password="klngxc@12AB";
+
+		User inputUser=new User(userName, password, email);
+		User newStudent = userService.save(inputUser);
+		String returnMessage=messageService.showMessage(languageId,"STUDENT_SAVE_SUCCESS");
+		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//	Use Case 1.2: If username < 8 chars, I should NOT be able to register. I should get the message
-    //	"Student registration failure! Username should be 8 + chars long!".
+	//	Use Case 3.2.1: If username < 8 chars, I should NOT be able to register. I should get the message
+	//	"Student registration failure! Username should be 8 or more characters long.".
 	@Test
 	public void testNegativeShortUsername() throws Exception
 	{
@@ -53,8 +62,45 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//	Use Case 2.1: If password is invalid, I should NOT be able to register.
-	//	password < 8 chars: "Student registration failure! Invalid password < 8 chars.".
+	//	Use Case 3.2.2: If username already exists, I should NOT be able to register. I should get the
+	//	message "Student registration failure! This username is already taken by another user.
+	//	Please try some other username.".
+	@Test
+	public void testNegativeDuplicateUsername() throws Exception
+	{
+		String userName="Dhirajkumar";
+		String enocdedUserName=new GeneralEncoderDecoder().encrypt(userName);
+		String userPassword="dhiraj67$#LB1";
+		String userEmail="dhiraj@gmail.com";
+		User inputUser=new User(userName,userPassword,userEmail);
+
+		if (userService.findByUsername(enocdedUserName)==null)
+		{
+			User firstStudent = userService.save(inputUser);
+		}
+
+		userName="Dhirajkumar";
+		userPassword="vinay4*67$#LB1";
+		userEmail="vinay@gmail.com";
+		inputUser=new User(userName,userPassword,userEmail);
+
+		User newStudent=userService.save(inputUser);
+		String returnMessage=messageService.showMessage(languageId,"STUDENT_DUPLICATE_USERNAME");
+		assertEquals(newStudent.getMessageResponse().getMessage(),
+				returnMessage);
+	}
+
+	//	Use Case 3.2.3: If username is blank, I should NOT be able to register. I should get the message
+	//	"Student registration failure! Username cannot be blank.".
+	@Test
+	public void testNegativeBlankUserName() throws Exception {
+		User expectedStudent=userService.save(new User("","sourav123","sourav@gmail.com"));
+		String returnMessage=messageService.showMessage(languageId,"STUDENT_USERNAME_BLANK");
+		assertEquals(expectedStudent.getMessageResponse().getMessage(),returnMessage);
+	}
+
+	//	Use Case 3.3.1: If password < 8 characters, I should NOT be able to register. Should see message:
+	//	"Student registration failure! Invalid password. Password should be 8 to 20 characters long.".
 	@Test
 	public void testNegativeShortPassword() throws Exception
 	{
@@ -67,8 +113,8 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//	Use Case 2.2: If password is invalid, I should NOT be able to register.
-	//	password > 20 chars: "Student registration failure! Invalid password > 20 chars."
+	//	Use Case 3.3.2: If password > 20 charsacters, I should NOT be able to register. Should see message:
+	//	"Student registration failure! Invalid password. Password should be 8 to 20 characters long."
 	@Test
 	public void testNegativeLongPassword() throws Exception
 	{
@@ -81,8 +127,8 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//	Use Case 2.3: password containing "username" string,I should not be able to register.
-	//	"Student registration failure! Invalid password containing username."
+	//	Use Case 3.3.3: password containing "username" string,I should not be able to register. Message:
+	//	"Student registration failure! Invalid password. Password should not contain your username."
 	@Test
 	public void testNegativePasswordContainsUsername() throws Exception
 	{
@@ -95,8 +141,11 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//	password NOT containing small alphabet (a-z),I should not be able to register.
-	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z), at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character among (@,#,$,%,^,&,+,=)"
+	//	Use Case 3.3.4.1: Invalid password NOT containing small alphabet (a-z),
+	//	I should not be able to register. Message:
+	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z),
+	//	at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character
+	//	among (@,#,$,%,^,&,+,=)"
 	@Test
 	public void testNegativePasswordNotContainsSmallChar() throws Exception {
 		String userName = "ranighosh";
@@ -108,8 +157,11 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(), returnMessage);
 	}
 
-	//	password NOT containing capital alphabet (A-Z), I should not be able to register.
-	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z), at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character among (@,#,$,%,^,&,+,=)"
+	//	Use Case 3.3.4.2: Invalid password NOT containing CAPITAL alphabet (A-Z),
+	//	I should not be able to register. Message:
+	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z),
+	//	at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character
+	//	among (@,#,$,%,^,&,+,=)"
 	@Test
 	public void testNegativePasswordNotContainsCapsChar() throws Exception
 	{
@@ -122,8 +174,11 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//  password NOT containing numeric (0-9) character, I should not be able to register.
-	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z), at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character among (@,#,$,%,^,&,+,=)"
+	//	Use Case 3.3.4.3: Invalid password NOT containing numeric (0-9),
+	//	I should not be able to register. Message:
+	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z),
+	//	at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character
+	//	among (@,#,$,%,^,&,+,=)"
 	@Test
 	public void testNegativePasswordNotContainsNumericChar() throws Exception
 	{
@@ -136,8 +191,11 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//  password NOT containing special character among (@,#,$,%,^,&,+,=), I should not be able to register.
-	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z), at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character among (@,#,$,%,^,&,+,=)"
+	//	Use Case 3.3.4.4: Invalid password NOT containing CAPITAL special character among (@,#,$,%,^,&,+,=)
+	//	I should not be able to register. Message:
+	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z),
+	//	at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character
+	//	among (@,#,$,%,^,&,+,=)"
 	@Test
 	public void testNegativePasswordNotContainsSpecialChar() throws Exception
 	{
@@ -150,8 +208,14 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//	Use Case 3.5: If email is invalid, I should NOT be able to register. with the following message
-	//	"Student registration failure! Invalid email format."
+	//	Use Case 3.4.1: If email is invalid, =>
+	//1. Does not contain exactly one '@' character.
+	//2. Does not contain one or more '.' characters after the '@' character.
+	//3. Does not contain any alphabet (a-z, A-Z) before '@'.
+	//4. Does not contain any alphabet (a-z, A-Z) in between '@' and '.'.
+	//5. Does not contain any alphabet (a-z, A-Z) after the last '.' character.
+	// I should NOT be able to register. with the following message:
+	//	"Student registration failure! Invalid email address."
 	@Test
 	public void testNegativeInvalidEmail1() throws Exception
 	{
@@ -200,35 +264,8 @@ class JwtAuthApplicationTests {
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
-	//	Use Case 1.3: If username already exists, I should NOT be able to register. I should get the message
-	//	"Student registration failure! Duplicate username!".
-	@Test
-	public void testNegativeDuplicateUsername() throws Exception
-	{
-		String userName="Dhirajkumar";
-		String enocdedUserName=new GeneralEncoderDecoder().encrypt(userName);
-		String userPassword="dhiraj67$#LB1";
-		String userEmail="dhiraj@gmail.com";
-		User inputUser=new User(userName,userPassword,userEmail);
-
-		if (userService.findByUsername(enocdedUserName)==null)
-		{
-			User firstStudent = userService.save(inputUser);
-		}
-
-		userName="Dhirajkumar";
-		userPassword="vinay4*67$#LB1";
-		userEmail="vinay@gmail.com";
-		inputUser=new User(userName,userPassword,userEmail);
-
-		User newStudent=userService.save(inputUser);
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_DUPLICATE_USERNAME");
-		assertEquals(newStudent.getMessageResponse().getMessage(),
-				returnMessage);
-	}
-
-	//	Use Case 1.3: If email already exists, I should NOT be able to register. I should get the message
-	//	"Student registration failure! Duplicate email address.".
+	//	Use Case 3.4.2: If email already exists, I should NOT be able to register. I should get the message:
+	//	"Student registration failure! An user with the same email address is already registered.".
 	@Test
 	public void testNegativeDuplicateEmail() throws Exception
 	{
@@ -255,23 +292,11 @@ class JwtAuthApplicationTests {
 				returnMessage);
 	}
 
-	//	Use Case 1: Enter valid user,email and password, I should be able to register. I should get the message
-	//	"Student registration successful!".
-	@Test
-	public void testPositiveSuccessfulRegistration() throws Exception
-	{
-		String randomNumber=GenerateRandomNumber();
-		String userName="adas".concat(randomNumber);
-		String preFixEmail="abc".concat(randomNumber.substring(1,6));
-		String email=preFixEmail.concat(".das@gmail.com");
-		String password="klngxc@12AB";
+//	*******************************************************************************
+//					      Utility functions for unit test cases
+//	*******************************************************************************
 
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_SAVE_SUCCESS");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
+//	1. Random number generation
 	private String GenerateRandomNumber()
 	{
 		try
@@ -283,5 +308,4 @@ class JwtAuthApplicationTests {
 			return "";
 		}
 	}
-
 }
