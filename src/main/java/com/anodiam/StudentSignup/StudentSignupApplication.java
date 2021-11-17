@@ -21,36 +21,36 @@ public class StudentSignupApplication {
 		SpringApplication.run(StudentSignupApplication.class, args);
 	}
 
-	@Bean
-	public ServletWebServerFactory servletContainer() {
-		System.out.println("Inside servletContainer()");
-//		 Enable SSL Trafic
-		TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
-			@Override
-			protected void postProcessContext(Context context) {
-				SecurityConstraint securityConstraint = new SecurityConstraint();
-				securityConstraint.setUserConstraint("CONFIDENTIAL");
-				SecurityCollection collection = new SecurityCollection();
-				collection.addPattern("/*");
-				securityConstraint.addCollection(collection);
-				context.addConstraint(securityConstraint);
-			}
-		};
-//		 Add HTTP to HTTPS redirect
-		tomcat.addAdditionalTomcatConnectors(httpToHttpsRedirectConnector());
-		return tomcat;
-	}
-
-//    We need to redirect from HTTP to HTTPS. Without SSL, this application used
-//    port 4444. With SSL it will use port 8444. So, any request for 4444 needs to be
-//    redirected to HTTPS on 8444.
-    private Connector httpToHttpsRedirectConnector() {
-		System.out.println("Inside httpToHttpsRedirectConnector()");
-		Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
-		connector.setScheme("http");
-		connector.setPort(4444);
-		connector.setSecure(false);
-		connector.setRedirectPort(8444);
-		return connector;
-	}
+//	@Bean
+//	public ServletWebServerFactory servletContainer() {
+//		System.out.println("Inside servletContainer()");
+////		 Enable SSL Trafic
+//		TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
+//			@Override
+//			protected void postProcessContext(Context context) {
+//				SecurityConstraint securityConstraint = new SecurityConstraint();
+//				securityConstraint.setUserConstraint("CONFIDENTIAL");
+//				SecurityCollection collection = new SecurityCollection();
+//				collection.addPattern("/*");
+//				securityConstraint.addCollection(collection);
+//				context.addConstraint(securityConstraint);
+//			}
+//		};
+////		 Add HTTP to HTTPS redirect
+//		tomcat.addAdditionalTomcatConnectors(httpToHttpsRedirectConnector());
+//		return tomcat;
+//	}
+//
+////    We need to redirect from HTTP to HTTPS. Without SSL, this application used
+////    port 4444. With SSL it will use port 8444. So, any request for 4444 needs to be
+////    redirected to HTTPS on 8444.
+//    private Connector httpToHttpsRedirectConnector() {
+//		System.out.println("Inside httpToHttpsRedirectConnector()");
+//		Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
+//		connector.setScheme("http");
+//		connector.setPort(4444);
+//		connector.setSecure(false);
+//		connector.setRedirectPort(8444);
+//		return connector;
+//	}
 }
