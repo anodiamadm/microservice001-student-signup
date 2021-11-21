@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 @SpringBootTest
 class JwtAuthApplicationTests {
 
-	int languageId= StudentSignupApplication.languageId;
+	int language_Id = StudentSignupApplication.languageId;
 	@Autowired
 	private UserService userService;
 
@@ -44,7 +44,7 @@ class JwtAuthApplicationTests {
 
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_SAVE_SUCCESS");
+		String returnMessage=messageService.showMessage(language_Id,"STUDENT_SAVE_SUCCESS");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -58,7 +58,7 @@ class JwtAuthApplicationTests {
 		String password="adcb@12AB";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_USERNAME_MIN_LENGTH");
+		String returnMessage=messageService.showMessage(language_Id,"STUDENT_USERNAME_MIN_LENGTH");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -85,7 +85,7 @@ class JwtAuthApplicationTests {
 		inputUser=new User(userName,userPassword,userEmail);
 
 		User newStudent=userService.save(inputUser);
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_DUPLICATE_USERNAME");
+		String returnMessage=messageService.showMessage(language_Id,"STUDENT_DUPLICATE_USERNAME");
 		assertEquals(newStudent.getMessageResponse().getMessage(),
 				returnMessage);
 	}
@@ -95,7 +95,7 @@ class JwtAuthApplicationTests {
 	@Test
 	public void testNegativeBlankUserName() throws Exception {
 		User expectedStudent=userService.save(new User("","sourav123","sourav@gmail.com"));
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_USERNAME_BLANK");
+		String returnMessage=messageService.showMessage(language_Id,"STUDENT_USERNAME_BLANK");
 		assertEquals(expectedStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -109,7 +109,7 @@ class JwtAuthApplicationTests {
 		String password="ad@12A";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_PASSWORD_MIN_LENGTH");
+		String returnMessage=messageService.showMessage(language_Id,"STUDENT_PASSWORD_MIN_LENGTH");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -123,7 +123,7 @@ class JwtAuthApplicationTests {
 		String password="123456YT&+ad@12Aqwerty";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_PASSWORD_MAX_LENGTH");
+		String returnMessage=messageService.showMessage(language_Id,"STUDENT_PASSWORD_MAX_LENGTH");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -137,7 +137,7 @@ class JwtAuthApplicationTests {
 		String password="ranighosh1A";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_PASSWORD_CONTAIN_USERNAME");
+		String returnMessage=messageService.showMessage(language_Id,"STUDENT_PASSWORD_CONTAIN_USERNAME");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -153,7 +153,7 @@ class JwtAuthApplicationTests {
 		String password = "RANI@GHOSH1A";
 		User inputUser = new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(languageId, "STUDENT_INVALID_PASSWORD");
+		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_PASSWORD");
 		assertEquals(newStudent.getMessageResponse().getMessage(), returnMessage);
 	}
 
@@ -170,7 +170,7 @@ class JwtAuthApplicationTests {
 		String password="rani@ghosh1a";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(languageId, "STUDENT_INVALID_PASSWORD");
+		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_PASSWORD");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -187,7 +187,7 @@ class JwtAuthApplicationTests {
 		String password="rani@ghoshA";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(languageId, "STUDENT_INVALID_PASSWORD");
+		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_PASSWORD");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -204,7 +204,7 @@ class JwtAuthApplicationTests {
 		String password="gfdhtyws1A";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(languageId, "STUDENT_INVALID_PASSWORD");
+		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_PASSWORD");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -224,7 +224,7 @@ class JwtAuthApplicationTests {
 		String password="dhiraj67$#LB1";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(languageId, "STUDENT_INVALID_EMAIL_ADDRESS");
+		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_EMAIL_ADDRESS");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -236,7 +236,7 @@ class JwtAuthApplicationTests {
 		String password="dhiraj67$#LB1";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(languageId, "STUDENT_INVALID_EMAIL_ADDRESS");
+		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_EMAIL_ADDRESS");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -248,7 +248,7 @@ class JwtAuthApplicationTests {
 		String password="dhiraj67$#LB1";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(languageId, "STUDENT_INVALID_EMAIL_ADDRESS");
+		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_EMAIL_ADDRESS");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -260,7 +260,7 @@ class JwtAuthApplicationTests {
 		String password="dhiraj67$#LB1";
 		User inputUser=new User(userName, password, email);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(languageId, "STUDENT_INVALID_EMAIL_ADDRESS");
+		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_EMAIL_ADDRESS");
 		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
 	}
 
@@ -287,7 +287,7 @@ class JwtAuthApplicationTests {
 		inputUser=new User(userName,password,email);
 
 		User newStudent=userService.save(inputUser);
-		String returnMessage=messageService.showMessage(languageId,"STUDENT_DUPLICATE_EMAIL_ADDRESS");
+		String returnMessage=messageService.showMessage(language_Id,"STUDENT_DUPLICATE_EMAIL_ADDRESS");
 		assertEquals(newStudent.getMessageResponse().getMessage(),
 				returnMessage);
 	}
