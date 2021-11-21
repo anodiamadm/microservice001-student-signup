@@ -167,7 +167,7 @@ class UserServiceDal extends UserServiceImpl {
         return m.matches();
     }
 
-    public static boolean isValidEmail(String email)
+    private static boolean isValidEmail(String email)
     {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
                 "[a-zA-Z0-9_+&*-]+)*@" +
