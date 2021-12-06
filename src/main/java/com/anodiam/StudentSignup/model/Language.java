@@ -8,19 +8,22 @@ import javax.persistence.*;
 public class Language {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer language_id;
+    @Column(name="language_id")
+    private Integer languageId;
 
-    private String language_code;
+    @Column(name="language_code")
+    private String languageCode;
 
-    private String language_desc;
+    @Column(name="language_desc")
+    private String languageDesc;
 
     @Transient
     private MessageResponse messageResponse;
 
-    public Language(Integer language_id,String language_code,String language_desc) {
-        this.language_id = language_id;
-        this.language_code = language_code;
-        this.language_desc=language_desc;
+    public Language(Integer languageId,String languageCode,String languageDesc) {
+        this.languageId = languageId;
+        this.languageCode = languageCode;
+        this.languageDesc=languageDesc;
     }
 
     protected Language(){}
@@ -33,27 +36,27 @@ public class Language {
         this.messageResponse = messageResponse;
     }
 
-    public Integer getLanguage_id() {
-        return language_id;
+    public Integer getLanguageId() {
+        return languageId;
     }
 
-    public void setLanguage_id(Integer language_id) {
-        this.language_id = language_id;
+    public void setLanguageId(Integer languageId) {
+        this.languageId = languageId;
     }
 
-    public String getLanguage_code() {
-        return language_code;
+    public String getLanguageCode() {
+        return languageCode;
     }
 
-    public void setLanguage_code(String language_code) {
-        this.language_code = language_code;
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
     }
 
-    public String getLanguage_desc() {
-        return language_desc;
+    public String getLanguageDesc() {
+        return languageDesc;
     }
 
-    public void setLanguage_desc(String language_desc) {
-        this.language_desc = language_desc;
+    public void setLanguageDesc(String languageDesc) {
+        this.languageDesc = languageDesc;
     }
 }

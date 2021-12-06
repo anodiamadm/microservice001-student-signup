@@ -16,19 +16,19 @@ class MessageServiceDal extends MessageServiceImpl {
     private MessageRepository messageRepository;
 
     @Override
-    public String showMessage(Integer language_id,String message_code)
+    public String showMessage(Integer languageId,String messageCode)
     {
         try
         {
             List<Message> allMessages = messageRepository.findAll()
-                    .stream().filter(a->a.getLanguage().getLanguage_id() == language_id
-                            && a.getMessage_code().equals(message_code))
+                    .stream().filter(a->a.getLanguage().getLanguageId() == languageId
+                            && a.getMessageCode().equals(messageCode))
                     .collect(Collectors.toList());
 
             if (allMessages == null) { return ""; }
             if (allMessages.size() == 0) { return ""; }
 
-            return allMessages.get(0).getMessage_desc();
+            return allMessages.get(0).getMessageDesc();
         }catch(Exception ex) { return ""; }
     }
 }

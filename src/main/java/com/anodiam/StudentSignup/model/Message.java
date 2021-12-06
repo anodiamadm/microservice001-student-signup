@@ -8,24 +8,27 @@ import javax.persistence.*;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer message_id;
+    @Column(name="message_id")
+    private Integer messageId;
 
     @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "language_id", referencedColumnName = "language_id")
     private Language language;
 
-    private String message_code;
+    @Column(name="message_code")
+    private String messageCode;
 
-    private String message_desc;
+    @Column(name="message_desc")
+    private String messageDesc;
 
     @Transient
     private MessageResponse messageResponse;
 
-    public Message(Integer message_id,Language language,String message_code,String message_desc) {
-        this.message_id = message_id;
+    public Message(Integer messageId,Language language,String messageCode,String messageDesc) {
+        this.messageId = messageId;
         this.language = language;
-        this.message_code = message_code;
-        this.message_desc=message_desc;
+        this.messageCode = messageCode;
+        this.messageDesc=messageDesc;
     }
 
     protected Message(){}
@@ -38,14 +41,6 @@ public class Message {
         this.messageResponse = messageResponse;
     }
 
-    public Integer getMessage_id() {
-        return message_id;
-    }
-
-    public void setMessage_id(Integer message_id) {
-        this.message_id = message_id;
-    }
-
     public Language getLanguage() {
         return language;
     }
@@ -54,19 +49,27 @@ public class Message {
         this.language = language;
     }
 
-    public String getMessage_code() {
-        return message_code;
+    public Integer getMessageId() {
+        return messageId;
     }
 
-    public void setMessage_code(String message_code) {
-        this.message_code = message_code;
+    public void setMessageId(Integer messageId) {
+        this.messageId = messageId;
     }
 
-    public String getMessage_desc() {
-        return message_desc;
+    public String getMessageCode() {
+        return messageCode;
     }
 
-    public void setMessage_desc(String message_desc) {
-        this.message_desc = message_desc;
+    public void setMessageCode(String messageCode) {
+        this.messageCode = messageCode;
+    }
+
+    public String getMessageDesc() {
+        return messageDesc;
+    }
+
+    public void setMessageDesc(String messageDesc) {
+        this.messageDesc = messageDesc;
     }
 }
