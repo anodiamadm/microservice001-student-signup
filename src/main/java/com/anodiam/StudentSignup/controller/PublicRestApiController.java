@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+//import javax.validation.Valid;
 
 @RestController
 @RequestMapping("api/public")
@@ -20,7 +20,8 @@ public class PublicRestApiController {
 
 //  @PostMapping("student-signup") :: Register New user with username & password
     @PostMapping(value = "/student-signup")
-    public ResponseEntity<?> studentSignup(@Valid @RequestBody User student) throws Exception {
+//    public ResponseEntity<?> studentSignup(@Valid @RequestBody User student) throws Exception {
+    public ResponseEntity<?> studentSignup(@RequestBody User student) throws Exception {
         try
         {
             User studentToSignUp = userService.save(student);
