@@ -4,6 +4,7 @@ package com.anodiam.StudentSignup;
 //import org.apache.catalina.connector.Connector;
 //import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 //import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import com.anodiam.StudentSignup.secretManager.Quickstart;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -19,8 +20,15 @@ public class StudentSignupApplication {
 	public static void main(String[] args) {
 		System.out.println("Inside main()");
 		SpringApplication.run(StudentSignupApplication.class, args);
+		secretMgrExp();
 	}
 
+	private static void secretMgrExp(){
+		System.out.println("\nInside secretMgrExp\n*************************\n");
+		Quickstart quickstart = new Quickstart();
+		quickstart.quickstart1();
+		System.out.println("\n*************************\nCompleted secretMgrExp\n");
+	}
 //	@Bean
 //	public ServletWebServerFactory servletContainer() {
 //		System.out.println("Inside servletContainer()");
