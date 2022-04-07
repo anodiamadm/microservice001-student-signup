@@ -18,17 +18,9 @@ public class StudentSignupApplication {
 
 	public static int languageId = 1;
 	public static void main(String[] args) {
-		System.out.println("Inside main()");
 		SpringApplication.run(StudentSignupApplication.class, args);
-		secretMgrExp();
 	}
 
-	private static void secretMgrExp(){
-		System.out.println("\nInside secretMgrExp\n*************************\n");
-		Quickstart quickstart = new Quickstart();
-		quickstart.quickstart1();
-		System.out.println("\n*************************\nCompleted secretMgrExp\n");
-	}
 //	@Bean
 //	public ServletWebServerFactory servletContainer() {
 //		System.out.println("Inside servletContainer()");
