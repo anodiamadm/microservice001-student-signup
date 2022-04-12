@@ -16,10 +16,6 @@ class JwtAuthApplicationTests {
 	@Autowired
 	private UserService userService;
 
-	@Test
-	void contextLoads() {
-	}
-
 //*******************************************************************************************
 //	JUNIT TEST CASES for microservice001-student-signup Test Based Development Starts Here
 //*******************************************************************************************
