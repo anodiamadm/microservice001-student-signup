@@ -1,13 +1,12 @@
 package com.anodiam.StudentSignup.serviceRepository.User;
 
-import com.anodiam.StudentSignup.StudentSignupApplication;
+import com.anodiam.StudentSignup.model.Permission;
 import com.anodiam.StudentSignup.model.Role;
 import com.anodiam.StudentSignup.model.User;
 import com.anodiam.StudentSignup.model.common.MessageResponse;
 import com.anodiam.StudentSignup.model.common.ResponseCode;
-import com.anodiam.StudentSignup.serviceRepository.Message.MessageService;
+import com.anodiam.StudentSignup.serviceRepository.Permission.PermissionRepository;
 import com.anodiam.StudentSignup.serviceRepository.Role.RoleRepository;
-import com.anodiam.StudentSignup.serviceRepository.errorHandling.ErrorHandlingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,10 +26,7 @@ class UserServiceDal extends UserServiceImpl {
     private RoleRepository roleRepository;
 
     @Autowired
-    private ErrorHandlingService errorHandlingService;
-
-    @Autowired
-    private MessageService messageService;
+    private PermissionRepository permissionRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -50,91 +46,45 @@ class UserServiceDal extends UserServiceImpl {
     @Override
     public User save(User student)
     {
-        int language_Id = StudentSignupApplication.languageId;
-        String returnMessage="";
         try
         {
-            if(student.getUsername().trim().length() == 0)
-            {
-                returnMessage=messageService.showMessage(language_Id,"STUDENT_USERNAME_BLANK");
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        returnMessage));
+            if (!isValidEmail(student.getUsername())) {
+                student.setMessageResponse(new MessageResponse(ResponseCode.EMAIL_FORMAT_INVALID.getID(),
+                        ResponseCode.EMAIL_FORMAT_INVALID.getMessage()));
                 return student;
             }
-            if(student.getUsername().trim().length() < 8)
-            {
-                returnMessage=messageService.showMessage(language_Id,"STUDENT_USERNAME_MIN_LENGTH");
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        returnMessage));
+            if (userRepository.findByUsername(student.getUsername())!=null) {
+                student.setMessageResponse(new MessageResponse(ResponseCode.USER_ALREADY_EXISTS.getID(),
+                        ResponseCode.USER_ALREADY_EXISTS.getMessage()));
                 return student;
             }
-
-            if(student.getPassword().trim().length() < 8)
-            {
-                returnMessage=messageService.showMessage(language_Id,"STUDENT_PASSWORD_MIN_LENGTH");
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
+            if(student.getPassword().length() < 6) {
+                student.setMessageResponse(new MessageResponse(ResponseCode.PASSWORD_SHORT.getID(),
+                        ResponseCode.PASSWORD_SHORT.getMessage()));
                 return student;
             }
-            if(student.getPassword().trim().length() > 20)
-            {
-                returnMessage=messageService.showMessage(language_Id,"STUDENT_PASSWORD_MAX_LENGTH");
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
+            if (!isValidPassword(student.getPassword())) {
+                student.setMessageResponse(new MessageResponse(ResponseCode.PASSWORD_INVALID.getID(),
+                        ResponseCode.PASSWORD_INVALID.getMessage()));
                 return student;
             }
-            if(student.getPassword().contains(student.getUsername()))
-            {
-                returnMessage=messageService.showMessage(language_Id,"STUDENT_PASSWORD_CONTAIN_USERNAME");
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(), returnMessage));
-                return student;
-            }
-            if (!isValidPassword(student.getPassword()))
-            {
-                returnMessage=messageService.showMessage(language_Id,"STUDENT_INVALID_PASSWORD");
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        returnMessage));
-                return student;
-            }
-            if (!isValidEmail(student.getEmail()))
-            {
-                returnMessage=messageService.showMessage(language_Id,"STUDENT_INVALID_EMAIL_ADDRESS");
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        returnMessage));
-                return student;
-            }
-
-            String enocdedUserName=new GeneralEncoderDecoder().encrypt(student.getUsername());
-            if(userRepository.findByUsername(enocdedUserName) !=null)
-            {
-                returnMessage=messageService.showMessage(language_Id,"STUDENT_DUPLICATE_USERNAME");
-                student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
-                        returnMessage));
-                return student;
-            }
-
-            String enocdedEmail=new GeneralEncoderDecoder().encrypt(student.getEmail());
-            if(userRepository.findByEmail(enocdedEmail) !=null)
-            {
-                returnMessage=messageService.showMessage(language_Id,"STUDENT_DUPLICATE_EMAIL_ADDRESS");
-                student.setMessageResponse(new MessageResponse(ResponseCode.DUPLICATE.getID(),
-                        returnMessage));
-                return student;
-            }
-
             String encodedPassword = passwordEncoder.encode(student.getPassword());
-            User studentToSave = new User(enocdedUserName, encodedPassword,enocdedEmail);
+            User studentToSave = new User(student.getUsername(), encodedPassword);
             Role role_user = roleRepository.findByRoleName("USER");
+            Permission permission_user = permissionRepository.findByPermissionName("STUDENT_ACCESS");
             studentToSave.getRoleList().add(role_user);
+            studentToSave.getPermissionList().add(permission_user);
             role_user.getUserList().add(studentToSave);
+            permission_user.getUserList().add(studentToSave);
             userRepository.save(studentToSave);
-            returnMessage=messageService.showMessage(language_Id,"STUDENT_SAVE_SUCCESS");
             studentToSave.setMessageResponse(new MessageResponse(ResponseCode.SUCCESS.getID(),
-                    returnMessage));
+                    ResponseCode.SUCCESS.getMessage()));
             return studentToSave;
 
-        } catch (Exception exception)
-        {
+        } catch (Exception exception) {
             exception.printStackTrace();
-            student.setMessageResponse(errorHandlingService.GetErrorMessage(exception.getMessage()));
+                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
+                        ResponseCode.FAILURE.getMessage() + exception.getMessage()));
             return student;
         }
     }
@@ -146,7 +96,7 @@ class UserServiceDal extends UserServiceImpl {
         String regex = "^(?=.*[0-9])"
                 + "(?=.*[a-z])(?=.*[A-Z])"
                 + "(?=.*[@#$%^&+=])"
-                + "(?=\\S+$).{8,20}$";
+                + "(?=\\S+$).{5,100}$";
 
         // Compile the ReGex
         Pattern p = Pattern.compile(regex);
@@ -172,7 +122,7 @@ class UserServiceDal extends UserServiceImpl {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
                 "[a-zA-Z0-9_+&*-]+)*@" +
                 "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
-                "A-Z]{2,7}$";
+                "A-Z]{1,9}$";
 
         Pattern pat = Pattern.compile(emailRegex);
         if (email == null)

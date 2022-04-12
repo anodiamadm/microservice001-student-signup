@@ -1,8 +1,7 @@
 package com.anodiam.StudentSignup;
 
 import com.anodiam.StudentSignup.model.User;
-import com.anodiam.StudentSignup.serviceRepository.Message.MessageService;
-import com.anodiam.StudentSignup.serviceRepository.User.GeneralEncoderDecoder;
+import com.anodiam.StudentSignup.model.common.ResponseCode;
 import com.anodiam.StudentSignup.serviceRepository.User.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +13,8 @@ import static org.junit.Assert.*;
 @SpringBootTest
 class JwtAuthApplicationTests {
 
-	int language_Id = StudentSignupApplication.languageId;
 	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private MessageService messageService;
 
 	@Test
 	void contextLoads() {
@@ -28,268 +23,179 @@ class JwtAuthApplicationTests {
 //*******************************************************************************************
 //	JUNIT TEST CASES for microservice001-student-signup Test Based Development Starts Here
 //*******************************************************************************************
-//	****** Test case numbers are as per USECASE# from Product Backlog for traceability ******
-//	Following JUnits need to pass at Dev environment to be deployed to Test environment
 
-	//	Use Case 3: Enter valid user,email and password, I should be able to register.
-	//	I should get the message "Student registration successful!".
-	@Test
-	public void testPositiveSuccessfulRegistration() throws Exception
-	{
-		String randomNumber=GenerateRandomNumber();
-		String userName="adas".concat(randomNumber);
-		String preFixEmail="abc".concat(randomNumber.substring(1,6));
-		String email=preFixEmail.concat(".das@gmail.com");
-		String password="klngxc@12AB";
-
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(language_Id,"STUDENT_SAVE_SUCCESS");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
-	//	Use Case 3.2.1: If username < 8 chars, I should NOT be able to register. I should get the message
-	//	"Student registration failure! Username should be 8 or more characters long.".
-	@Test
-	public void testNegativeShortUsername() throws Exception
-	{
-		String userName="pinakid";
-		String email="pinaki.das1@gmail.com";
-		String password="adcb@12AB";
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(language_Id,"STUDENT_USERNAME_MIN_LENGTH");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
-	//	Use Case 3.2.2: If username already exists, I should NOT be able to register. I should get the
-	//	message "Student registration failure! This username is already taken by another user.
-	//	Please try some other username.".
-	@Test
-	public void testNegativeDuplicateUsername() throws Exception
-	{
-		String userName="Dhirajkumar";
-		String enocdedUserName=new GeneralEncoderDecoder().encrypt(userName);
-		String userPassword="dhiraj67$#LB1";
-		String userEmail="dhiraj@gmail.com";
-		User inputUser=new User(userName,userPassword,userEmail);
-
-		if (userService.findByUsername(enocdedUserName)==null)
-		{
-			User firstStudent = userService.save(inputUser);
-		}
-
-		userName="Dhirajkumar";
-		userPassword="vinay4*67$#LB1";
-		userEmail="vinay@gmail.com";
-		inputUser=new User(userName,userPassword,userEmail);
-
-		User newStudent=userService.save(inputUser);
-		String returnMessage=messageService.showMessage(language_Id,"STUDENT_DUPLICATE_USERNAME");
-		assertEquals(newStudent.getMessageResponse().getMessage(),
-				returnMessage);
-	}
-
-	//	Use Case 3.2.3: If username is blank, I should NOT be able to register. I should get the message
-	//	"Student registration failure! Username cannot be blank.".
-	@Test
-	public void testNegativeBlankUserName() throws Exception {
-		User expectedStudent=userService.save(new User("","sourav123","sourav@gmail.com"));
-		String returnMessage=messageService.showMessage(language_Id,"STUDENT_USERNAME_BLANK");
-		assertEquals(expectedStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
-	//	Use Case 3.3.1: If password < 8 characters, I should NOT be able to register. Should see message:
-	//	"Student registration failure! Invalid password. Password should be 8 to 20 characters long.".
-	@Test
-	public void testNegativeShortPassword() throws Exception
-	{
-		String userName="ranighosh";
-		String email="rani.ghosh695@gmail.com";
-		String password="ad@12A";
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(language_Id,"STUDENT_PASSWORD_MIN_LENGTH");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
-	//	Use Case 3.3.2: If password > 20 charsacters, I should NOT be able to register. Should see message:
-	//	"Student registration failure! Invalid password. Password should be 8 to 20 characters long."
-	@Test
-	public void testNegativeLongPassword() throws Exception
-	{
-		String userName="ranighosh";
-		String email="rani.ghosh695@gmail.com";
-		String password="123456YT&+ad@12Aqwerty";
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(language_Id,"STUDENT_PASSWORD_MAX_LENGTH");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
-	//	Use Case 3.3.3: password containing "username" string,I should not be able to register. Message:
-	//	"Student registration failure! Invalid password. Password should not contain your username."
-	@Test
-	public void testNegativePasswordContainsUsername() throws Exception
-	{
-		String userName="ranighosh";
-		String email="rani.ghosh695@gmail.com";
-		String password="ranighosh1A";
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage=messageService.showMessage(language_Id,"STUDENT_PASSWORD_CONTAIN_USERNAME");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
-	//	Use Case 3.3.4.1: Invalid password NOT containing small alphabet (a-z),
-	//	I should not be able to register. Message:
-	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z),
-	//	at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character
-	//	among (@,#,$,%,^,&,+,=)"
-	@Test
-	public void testNegativePasswordNotContainsSmallChar() throws Exception {
-		String userName = "ranighosh";
-		String email = "rani.ghosh695@gmail.com";
-		String password = "RANI@GHOSH1A";
-		User inputUser = new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_PASSWORD");
-		assertEquals(newStudent.getMessageResponse().getMessage(), returnMessage);
-	}
-
-	//	Use Case 3.3.4.2: Invalid password NOT containing CAPITAL alphabet (A-Z),
-	//	I should not be able to register. Message:
-	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z),
-	//	at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character
-	//	among (@,#,$,%,^,&,+,=)"
-	@Test
-	public void testNegativePasswordNotContainsCapsChar() throws Exception
-	{
-		String userName="ranighosh";
-		String email="rani.ghosh695@gmail.com";
-		String password="rani@ghosh1a";
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_PASSWORD");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
-	//	Use Case 3.3.4.3: Invalid password NOT containing numeric (0-9),
-	//	I should not be able to register. Message:
-	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z),
-	//	at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character
-	//	among (@,#,$,%,^,&,+,=)"
-	@Test
-	public void testNegativePasswordNotContainsNumericChar() throws Exception
-	{
-		String userName="ranighosh";
-		String email="rani.ghosh695@gmail.com";
-		String password="rani@ghoshA";
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_PASSWORD");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
-	//	Use Case 3.3.4.4: Invalid password NOT containing CAPITAL special character among (@,#,$,%,^,&,+,=)
-	//	I should not be able to register. Message:
-	//	"Student registration failure! Invalid password. Must contain at least one small alphabet (a-z),
-	//	at least one capital alphabet (A-Z), at least one numeric (0-9) and at least one special character
-	//	among (@,#,$,%,^,&,+,=)"
-	@Test
-	public void testNegativePasswordNotContainsSpecialChar() throws Exception
-	{
-		String userName="ranighosh";
-		String email="rani.ghosh695@gmail.com";
-		String password="gfdhtyws1A";
-		User inputUser=new User(userName, password, email);
-		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_PASSWORD");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
-	}
-
-	//	Use Case 3.4.1: If email is invalid, =>
-	//1. Does not contain exactly one '@' character.
-	//2. Does not contain one or more '.' characters after the '@' character.
-	//3. Does not contain any alphabet (a-z, A-Z) before '@'.
-	//4. Does not contain any alphabet (a-z, A-Z) in between '@' and '.'.
-	//5. Does not contain any alphabet (a-z, A-Z) after the last '.' character.
-	// I should NOT be able to register. with the following message:
-	//	"Student registration failure! Invalid email address."
+	//	User should NOT be able to register by entering invalid email.
+	//  1. Does not contain exactly one '@' character.
+	//  1.1 Contain 2 '@' characters.
+	//  2. Does not contain one or more '.' characters after the '@' character.
+	//  3. Does not contain any character before '@'.
+	//  4. Does not contain any character in between '@' and '.'.
+	//  5. Does not contain any alphabet (a-z, A-Z) after the last '.' character.
+	//  User should NOT be able to register. with the following message:
+	//	ERR: Microsvc001: Student Signup: Invalid Username / Email format used for Sign Up!
 	@Test
 	public void testNegativeInvalidEmail1() throws Exception
 	{
-		String userName="ranighosh";
-		String email="rani.ghosh695gmail.com";
-		String password="dhiraj67$#LB1";
-		User inputUser=new User(userName, password, email);
+		String email="invalidemail.noAt.gmail.com";
+		String password="dhsa67$#LB1";
+		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_EMAIL_ADDRESS");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
 	}
-
+	@Test
+	public void testNegativeInvalidEmail1_1() throws Exception
+	{
+		String email="invalidemail.twoAts@gma@il.com";
+		String password="dhsa67$#LB1";
+		User inputUser=new User(email, password);
+		User newStudent = userService.save(inputUser);
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+	}
 	@Test
 	public void testNegativeInvalidEmail2() throws Exception
 	{
-		String userName="ranighosh";
-		String email="rani.ghosh695@";
-		String password="dhiraj67$#LB1";
-		User inputUser=new User(userName, password, email);
+		String email="invalidemail.noDotAfterAt@gmail";
+		String password="dhsa67$#LB1";
+		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_EMAIL_ADDRESS");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
 	}
-
 	@Test
 	public void testNegativeInvalidEmail3() throws Exception
 	{
-		String userName="ranighosh";
 		String email="@gmail.com";
-		String password="dhiraj67$#LB1";
-		User inputUser=new User(userName, password, email);
+		String password="dhsa67$#LB1";
+		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_EMAIL_ADDRESS");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
 	}
-
 	@Test
 	public void testNegativeInvalidEmail4() throws Exception
 	{
-		String userName="ranighosh";
-		String email="rani.ghosh695@gmail";
-		String password="dhiraj67$#LB1";
-		User inputUser=new User(userName, password, email);
+		String email="invalidemail.noCharacterBetweenAndDot@.com";
+		String password="dhsa67$#LB1";
+		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		String returnMessage = messageService.showMessage(language_Id, "STUDENT_INVALID_EMAIL_ADDRESS");
-		assertEquals(newStudent.getMessageResponse().getMessage(),returnMessage);
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+	}
+	@Test
+	public void testNegativeInvalidEmail5() throws Exception
+	{
+		String email="invalidemail.noAlphabetAfterLastDot@gmail.99";
+		String password="dhsaj67$#LB1";
+		User inputUser=new User(email, password);
+		User newStudent = userService.save(inputUser);
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
 	}
 
-	//	Use Case 3.4.2: If email already exists, I should NOT be able to register. I should get the message:
-	//	"Student registration failure! An user with the same email address is already registered.".
+	//	User should NOT be able to register by entering existing / duplicate email.
+	//	"ERR: Microsvc001: Student Signup: Username / Email used for Sign Up is already registered!".
 	@Test
 	public void testNegativeDuplicateEmail() throws Exception
 	{
 		String randomNumber=GenerateRandomNumber();
-		String userName="adas".concat(randomNumber);
-		String preFixEmail="abc".concat(randomNumber.substring(1,6));
-		String email=preFixEmail.concat(".das@gmail.com");
-		String password="klngxc@12AB";
-
-		User inputUser=new User(userName,password,email);
-		String enocdedUserName=new GeneralEncoderDecoder().encrypt(userName);
-		if (userService.findByUsername(enocdedUserName)==null)
+		String preFixEmail="tbdDupTest".concat(randomNumber.substring(1,6));
+		String email=preFixEmail.concat(".user@gmail.com");
+		String password="ABcd@12";
+		User inputUser=new User(email, password);
+		if (userService.findByUsername(email)==null)
 		{
 			User firstStudent = userService.save(inputUser);
 		}
-
-		userName="phjk".concat(randomNumber);
-		password="hgtyu@12AB";
-		inputUser=new User(userName,password,email);
-
+		password="ABcd@123";
+		inputUser=new User(email,password);
 		User newStudent=userService.save(inputUser);
-		String returnMessage=messageService.showMessage(language_Id,"STUDENT_DUPLICATE_EMAIL_ADDRESS");
-		assertEquals(newStudent.getMessageResponse().getMessage(),
-				returnMessage);
+		assertEquals(ResponseCode.USER_ALREADY_EXISTS.getMessage(), newStudent.getMessageResponse().getMessage());
+	}
+
+	//	If password < 6 characters, user should NOT be able to register.
+	//	"ERR: Microsvc001: Student Signup: Password cannot be < 6 characters!"
+	@Test
+	public void testNegativeShortPassword() throws Exception
+	{
+		String email="abcd.smallpassword@gmail.com";
+		String password="a@12A";
+		User inputUser=new User(email, password);
+		User newStudent = userService.save(inputUser);
+		assertEquals(ResponseCode.PASSWORD_SHORT.getMessage(), newStudent.getMessageResponse().getMessage());
+	}
+
+	//	If password > 100 charsacters, user should NOT be able to register. Should see message:
+	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
+	//	alphabet, number and special character!"
+	@Test
+	public void testNegativeLongPassword() throws Exception
+	{
+		String email="abcd.bigpassword@gmail.com";
+		String password="0123456qwertyABCD@#$0123456qwertyABCD@#$0123456qwertyABCD@#$0123456qwertyABCD@#$0123456qwertyABCD@#$x";
+		User inputUser=new User(email, password);
+		User newStudent = userService.save(inputUser);
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+	}
+
+	//	If password does not contain characters [a-z], user should NOT be able to register: Message:
+	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
+	//	alphabet, number and special character!"
+	@Test
+	public void testNegativePasswordNotContainsSmallChar() throws Exception {
+		String email = "password.without.a-z@gmail.com";
+		String password = "ABCD@$123";
+		User inputUser = new User(email, password);
+		User newStudent = userService.save(inputUser);
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+	}
+
+	//	If password does not contain characters [A-Z], user should NOT be able to register: Message:
+	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
+	//	alphabet, number and special character!"
+	@Test
+	public void testNegativePasswordNotContainsCapsChar() throws Exception
+	{
+		String email = "password.without.A-Z@gmail.com";
+		String password = "abcd@$123";
+		User inputUser = new User(email, password);
+		User newStudent = userService.save(inputUser);
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+	}
+
+	//	If password does not contain numerals [0-9], user should NOT be able to register: Message:
+	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
+	//	alphabet, number and special character!"
+	@Test
+	public void testNegativePasswordNotContainsNumericChar() throws Exception
+	{
+		String email = "password.without.0-9@gmail.com";
+		String password = "abcdABCD@$";
+		User inputUser = new User(email, password);
+		User newStudent = userService.save(inputUser);
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+	}
+
+	//	If password does not contain special chars, user should NOT be able to register: Message:
+	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
+	//	alphabet, number and special character!"
+	@Test
+	public void testNegativePasswordNotContainsSpecialChar() throws Exception
+	{
+		String email = "password.withoutSplChar@gmail.com";
+		String password = "abcdABCD12";
+		User inputUser = new User(email, password);
+		User newStudent = userService.save(inputUser);
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+	}
+
+	//	User should be able to register by entering valid email and password.
+	//	Message: "SUCCESS: Microsvc001: Student Signup: Student registration successful!".
+	@Test
+	public void testPositiveSuccessfulRegistration() throws Exception
+	{
+		String randomNumber=GenerateRandomNumber();
+		String preFixEmail="pinaki".concat(randomNumber.substring(1,6));
+		String email=preFixEmail.concat(".sen@gmail.com");
+		String password="Pinaki@12";
+		User inputUser=new User(email, password);
+		User newStudent = userService.save(inputUser);
+		assertEquals(ResponseCode.SUCCESS.getMessage(), newStudent.getMessageResponse().getMessage());
 	}
 
 //	*******************************************************************************
