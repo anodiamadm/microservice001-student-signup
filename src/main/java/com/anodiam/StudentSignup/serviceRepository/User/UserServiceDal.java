@@ -83,7 +83,7 @@ class UserServiceDal extends UserServiceImpl {
 
         } catch (Exception exception) {
             exception.printStackTrace();
-                student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
+            student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
                         ResponseCode.FAILURE.getMessage() + exception.getMessage()));
             return student;
         }
