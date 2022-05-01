@@ -1,7 +1,11 @@
 package com.anodiam.StudentSignup;
 
+import com.anodiam.StudentSignup.model.Permission;
+import com.anodiam.StudentSignup.model.Role;
 import com.anodiam.StudentSignup.model.User;
 import com.anodiam.StudentSignup.model.common.ResponseCode;
+import com.anodiam.StudentSignup.serviceRepository.Permission.PermissionService;
+import com.anodiam.StudentSignup.serviceRepository.Role.RoleService;
 import com.anodiam.StudentSignup.serviceRepository.User.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,12 @@ class JwtAuthApplicationTests {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private PermissionService permissionService;
+
+	@Autowired
+	private RoleService roleService;
+
 //*******************************************************************************************
 //	JUNIT TEST CASES for microservice001-student-signup Test Based Development Starts Here
 //*******************************************************************************************
@@ -29,6 +39,44 @@ class JwtAuthApplicationTests {
 	//  5. Does not contain any alphabet (a-z, A-Z) after the last '.' character.
 	//  User should NOT be able to register. with the following message:
 	//	ERR: Microsvc001: Student Signup: Invalid Username / Email format used for Sign Up!
+
+	@Test
+	public void testNegativeFindByInvalidRoleName() throws Exception
+	{
+		String roleName="INVALID_ROLE";
+		Role role = roleService.findByRoleName(roleName).get();
+		assertEquals(ResponseCode.ROLE_NAME_INVALID.getMessage(),
+				role.getMessageResponse().getMessage());
+	}
+
+	@Test
+	public void testPositiveFindByValidRoleName() throws Exception
+	{
+		String roleName="USER";
+		Role role = roleService.findByRoleName(roleName).get();
+		assertEquals(ResponseCode.ROLE_NAME_EXISTS.getMessage(),
+				role.getMessageResponse().getMessage());
+	}
+
+
+	@Test
+	public void testNegativeFindByInvalidPermissionName() throws Exception
+	{
+		String permissionName="INVALID_ACCESS";
+		Permission permission = permissionService.findByPermissionName(permissionName).get();
+		assertEquals(ResponseCode.PERMISSION_NAME_INVALID.getMessage(),
+				permission.getMessageResponse().getMessage());
+	}
+
+	@Test
+	public void testPositiveFindByValidPermissionName() throws Exception
+	{
+		String permissionName="STUDENT_ACCESS";
+		Permission permission = permissionService.findByPermissionName(permissionName).get();
+		assertEquals(ResponseCode.PERMISSION_NAME_EXISTS.getMessage(),
+				permission.getMessageResponse().getMessage());
+	}
+
 	@Test
 	public void testNegativeInvalidEmail1() throws Exception
 	{
@@ -85,21 +133,14 @@ class JwtAuthApplicationTests {
 	}
 
 	//	User should NOT be able to register by entering existing / duplicate email.
+	//	email id - pinaki.sen@gmail.com already exists
 	//	"ERR: Microsvc001: Student Signup: Username / Email used for Sign Up is already registered!".
 	@Test
 	public void testNegativeDuplicateEmail() throws Exception
 	{
-		String randomNumber=GenerateRandomNumber();
-		String preFixEmail="tbdDupTest".concat(randomNumber.substring(1,6));
-		String email=preFixEmail.concat(".user@gmail.com");
+		String email="pinaki.sen@gmail.com";
 		String password="ABcd@12";
 		User inputUser=new User(email, password);
-		if (userService.findByUsername(email)==null)
-		{
-			User firstStudent = userService.save(inputUser);
-		}
-		password="ABcd@123";
-		inputUser=new User(email,password);
 		User newStudent=userService.save(inputUser);
 		assertEquals(ResponseCode.USER_ALREADY_EXISTS.getMessage(), newStudent.getMessageResponse().getMessage());
 	}

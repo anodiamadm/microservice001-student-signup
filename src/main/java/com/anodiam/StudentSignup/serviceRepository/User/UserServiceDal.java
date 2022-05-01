@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,13 +35,26 @@ class UserServiceDal extends UserServiceImpl {
     public UserServiceDal(){}
 
     @Override
-    public User findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
+        User userReturned = new User();
         try {
-            return userRepository.findByUsername(username);
+            Optional<User> optionalUser = userRepository.findByUsername(username);
+            if(optionalUser.isPresent()) {
+                userReturned = optionalUser.get();
+                userReturned.setMessageResponse(new
+                        MessageResponse(ResponseCode.USER_ALREADY_EXISTS.getID(),
+                        ResponseCode.USER_ALREADY_EXISTS.getMessage()));
+            } else {
+                userReturned.setMessageResponse(new
+                        MessageResponse(ResponseCode.USER_NOT_REGISTERED.getID(),
+                        ResponseCode.USER_NOT_REGISTERED.getMessage()));
+            }
         } catch (Exception exception) {
             exception.printStackTrace();
+            userReturned.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
+                    ResponseCode.FAILURE.getMessage()));
         }
-        return null;
+        return Optional.of(userReturned);
     }
 
     @Override
@@ -51,42 +65,35 @@ class UserServiceDal extends UserServiceImpl {
             if (!isValidEmail(student.getUsername())) {
                 student.setMessageResponse(new MessageResponse(ResponseCode.EMAIL_FORMAT_INVALID.getID(),
                         ResponseCode.EMAIL_FORMAT_INVALID.getMessage()));
-                return student;
-            }
-            if (userRepository.findByUsername(student.getUsername())!=null) {
+            } else if (userRepository.findByUsername(student.getUsername()).isPresent()) {
                 student.setMessageResponse(new MessageResponse(ResponseCode.USER_ALREADY_EXISTS.getID(),
                         ResponseCode.USER_ALREADY_EXISTS.getMessage()));
-                return student;
-            }
-            if(student.getPassword().length() < 6) {
+            } else if(student.getPassword().length() < 6) {
                 student.setMessageResponse(new MessageResponse(ResponseCode.PASSWORD_SHORT.getID(),
                         ResponseCode.PASSWORD_SHORT.getMessage()));
-                return student;
-            }
-            if (!isValidPassword(student.getPassword())) {
+            } else if (!isValidPassword(student.getPassword())) {
                 student.setMessageResponse(new MessageResponse(ResponseCode.PASSWORD_INVALID.getID(),
                         ResponseCode.PASSWORD_INVALID.getMessage()));
-                return student;
+            } else {
+                String encodedPassword = passwordEncoder.encode(student.getPassword());
+                User studentToSave = new User(student.getUsername(), encodedPassword);
+                Role role_user = roleRepository.findByRoleName("USER").get();
+                Permission permission_user = permissionRepository.findByPermissionName("STUDENT_ACCESS").get();
+                studentToSave.getRoleList().add(role_user);
+                studentToSave.getPermissionList().add(permission_user);
+                role_user.getUserList().add(studentToSave);
+                permission_user.getUserList().add(studentToSave);
+                userRepository.save(studentToSave);
+                studentToSave.setMessageResponse(new MessageResponse(ResponseCode.SUCCESS.getID(),
+                        ResponseCode.SUCCESS.getMessage()));
+                student = studentToSave;
             }
-            String encodedPassword = passwordEncoder.encode(student.getPassword());
-            User studentToSave = new User(student.getUsername(), encodedPassword);
-            Role role_user = roleRepository.findByRoleName("USER");
-            Permission permission_user = permissionRepository.findByPermissionName("STUDENT_ACCESS");
-            studentToSave.getRoleList().add(role_user);
-            studentToSave.getPermissionList().add(permission_user);
-            role_user.getUserList().add(studentToSave);
-            permission_user.getUserList().add(studentToSave);
-            userRepository.save(studentToSave);
-            studentToSave.setMessageResponse(new MessageResponse(ResponseCode.SUCCESS.getID(),
-                    ResponseCode.SUCCESS.getMessage()));
-            return studentToSave;
-
         } catch (Exception exception) {
             exception.printStackTrace();
             student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
                         ResponseCode.FAILURE.getMessage() + exception.getMessage()));
-            return student;
         }
+        return student;
     }
 
     private  static boolean isValidPassword(String password)

@@ -45,7 +45,7 @@ public class User {
         this.dateCreated = new Date();
     }
 
-    protected User(){}
+    public User(){}
 
     public MessageResponse getMessageResponse() {
         return messageResponse;

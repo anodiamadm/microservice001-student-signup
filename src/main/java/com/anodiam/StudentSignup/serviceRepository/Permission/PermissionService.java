@@ -2,6 +2,8 @@ package com.anodiam.StudentSignup.serviceRepository.Permission;
 
 import com.anodiam.StudentSignup.model.Permission;
 
+import java.util.Optional;
+
 public interface PermissionService {
-    Permission findByPermissionName(String permissionName);
+    Optional<Permission> findByPermissionName(String permissionName);
 }
