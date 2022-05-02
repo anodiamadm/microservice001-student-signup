@@ -43,16 +43,18 @@ class UserServiceDal extends UserServiceImpl {
                 userReturned = optionalUser.get();
                 userReturned.setMessageResponse(new
                         MessageResponse(ResponseCode.USER_ALREADY_EXISTS.getID(),
-                        ResponseCode.USER_ALREADY_EXISTS.getMessage()));
+                        ResponseCode.USER_ALREADY_EXISTS.getMessage()
+                                + userReturned.getUsername()));
             } else {
                 userReturned.setMessageResponse(new
                         MessageResponse(ResponseCode.USER_NOT_REGISTERED.getID(),
-                        ResponseCode.USER_NOT_REGISTERED.getMessage()));
+                        ResponseCode.USER_NOT_REGISTERED.getMessage()
+                                + username));
             }
         } catch (Exception exception) {
             exception.printStackTrace();
             userReturned.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                    ResponseCode.FAILURE.getMessage()));
+                    ResponseCode.FAILURE.getMessage() + exception.getMessage()));
         }
         return Optional.of(userReturned);
     }
@@ -64,16 +66,20 @@ class UserServiceDal extends UserServiceImpl {
         {
             if (!isValidEmail(student.getUsername())) {
                 student.setMessageResponse(new MessageResponse(ResponseCode.EMAIL_FORMAT_INVALID.getID(),
-                        ResponseCode.EMAIL_FORMAT_INVALID.getMessage()));
+                        ResponseCode.EMAIL_FORMAT_INVALID.getMessage()
+                                + student.getUsername()));
             } else if (userRepository.findByUsername(student.getUsername()).isPresent()) {
                 student.setMessageResponse(new MessageResponse(ResponseCode.USER_ALREADY_EXISTS.getID(),
-                        ResponseCode.USER_ALREADY_EXISTS.getMessage()));
+                        ResponseCode.USER_ALREADY_EXISTS.getMessage()
+                                + student.getUsername()));
             } else if(student.getPassword().length() < 6) {
                 student.setMessageResponse(new MessageResponse(ResponseCode.PASSWORD_SHORT.getID(),
-                        ResponseCode.PASSWORD_SHORT.getMessage()));
+                        ResponseCode.PASSWORD_SHORT.getMessage()
+                                + student.getPassword()));
             } else if (!isValidPassword(student.getPassword())) {
                 student.setMessageResponse(new MessageResponse(ResponseCode.PASSWORD_INVALID.getID(),
-                        ResponseCode.PASSWORD_INVALID.getMessage()));
+                        ResponseCode.PASSWORD_INVALID.getMessage()
+                                + student.getPassword()));
             } else {
                 String encodedPassword = passwordEncoder.encode(student.getPassword());
                 User studentToSave = new User(student.getUsername(), encodedPassword);
@@ -85,7 +91,8 @@ class UserServiceDal extends UserServiceImpl {
                 permission_user.getUserList().add(studentToSave);
                 userRepository.save(studentToSave);
                 studentToSave.setMessageResponse(new MessageResponse(ResponseCode.SUCCESS.getID(),
-                        ResponseCode.SUCCESS.getMessage()));
+                        ResponseCode.SUCCESS.getMessage()
+                                + student.getUsername()));
                 student = studentToSave;
             }
         } catch (Exception exception) {

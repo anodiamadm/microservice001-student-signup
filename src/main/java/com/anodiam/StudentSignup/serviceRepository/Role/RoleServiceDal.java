@@ -25,16 +25,18 @@ class RoleServiceDal extends RoleServiceImpl {
                 roleReturned = optionalRole.get();
                 roleReturned.setMessageResponse(new
                         MessageResponse(ResponseCode.ROLE_NAME_EXISTS.getID(),
-                        ResponseCode.ROLE_NAME_EXISTS.getMessage()));
+                        ResponseCode.ROLE_NAME_EXISTS.getMessage()
+                                + roleReturned.getRoleName()));
             } else {
                 roleReturned.setMessageResponse(new
                         MessageResponse(ResponseCode.ROLE_NAME_INVALID.getID(),
-                        ResponseCode.ROLE_NAME_INVALID.getMessage()));
+                        ResponseCode.ROLE_NAME_INVALID.getMessage()
+                                + roleReturned.getRoleName()));
             }
         } catch (Exception exception) {
             exception.printStackTrace();
             roleReturned.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                    ResponseCode.FAILURE.getMessage()));
+                    ResponseCode.FAILURE.getMessage() + exception.getMessage()));
         }
         return Optional.of(roleReturned);
     }

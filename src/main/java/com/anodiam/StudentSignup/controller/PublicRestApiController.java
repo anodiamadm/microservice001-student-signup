@@ -24,9 +24,9 @@ public class PublicRestApiController {
             User studentToSignUp = userService.save(student);
             return ResponseEntity.ok(new MessageResponse(studentToSignUp.getMessageResponse().getCode(),
                     studentToSignUp.getMessageResponse().getMessage()));
-        }catch(Exception ex){
+        }catch(Exception exception){
             return ResponseEntity.ok(new MessageResponse(ResponseCode.FAILURE.getID(),
-                    ex.getMessage()));
+                    exception.getMessage()));
         }
     }
 }

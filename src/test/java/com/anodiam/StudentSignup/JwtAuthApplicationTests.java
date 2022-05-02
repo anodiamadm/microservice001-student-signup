@@ -45,7 +45,7 @@ class JwtAuthApplicationTests {
 	{
 		String roleName="INVALID_ROLE";
 		Role role = roleService.findByRoleName(roleName).get();
-		assertEquals(ResponseCode.ROLE_NAME_INVALID.getMessage(),
+		assertEquals(ResponseCode.ROLE_NAME_INVALID.getMessage() + role.getRoleName(),
 				role.getMessageResponse().getMessage());
 	}
 
@@ -54,7 +54,7 @@ class JwtAuthApplicationTests {
 	{
 		String roleName="USER";
 		Role role = roleService.findByRoleName(roleName).get();
-		assertEquals(ResponseCode.ROLE_NAME_EXISTS.getMessage(),
+		assertEquals(ResponseCode.ROLE_NAME_EXISTS.getMessage() + role.getRoleName(),
 				role.getMessageResponse().getMessage());
 	}
 
@@ -64,8 +64,8 @@ class JwtAuthApplicationTests {
 	{
 		String permissionName="INVALID_ACCESS";
 		Permission permission = permissionService.findByPermissionName(permissionName).get();
-		assertEquals(ResponseCode.PERMISSION_NAME_INVALID.getMessage(),
-				permission.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.PERMISSION_NAME_INVALID.getMessage()
+						+ permission.getPermissionName(), permission.getMessageResponse().getMessage());
 	}
 
 	@Test
@@ -73,8 +73,26 @@ class JwtAuthApplicationTests {
 	{
 		String permissionName="STUDENT_ACCESS";
 		Permission permission = permissionService.findByPermissionName(permissionName).get();
-		assertEquals(ResponseCode.PERMISSION_NAME_EXISTS.getMessage(),
-				permission.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.PERMISSION_NAME_EXISTS.getMessage()
+						+ permission.getPermissionName(), permission.getMessageResponse().getMessage());
+	}
+
+	@Test
+	public void testNegativeFindByWrongEmail() throws Exception
+	{
+		String email="invalidemail@gmail.com";
+		User foundUser = userService.findByUsername(email).get();
+		assertEquals(ResponseCode.USER_NOT_REGISTERED.getMessage() + email,
+				foundUser.getMessageResponse().getMessage());
+	}
+
+	@Test
+	public void testPositiveFindByCorrectEmail() throws Exception
+	{
+		String email="pinaki.sen@gmail.com";
+		User foundUser = userService.findByUsername(email).get();
+		assertEquals(ResponseCode.USER_ALREADY_EXISTS.getMessage() + foundUser.getUsername(),
+				foundUser.getMessageResponse().getMessage());
 	}
 
 	@Test
@@ -84,8 +102,10 @@ class JwtAuthApplicationTests {
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
+				newStudent.getMessageResponse().getMessage());
 	}
+
 	@Test
 	public void testNegativeInvalidEmail1_1() throws Exception
 	{
@@ -93,8 +113,10 @@ class JwtAuthApplicationTests {
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
+				newStudent.getMessageResponse().getMessage());
 	}
+
 	@Test
 	public void testNegativeInvalidEmail2() throws Exception
 	{
@@ -102,8 +124,10 @@ class JwtAuthApplicationTests {
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
+				newStudent.getMessageResponse().getMessage());
 	}
+
 	@Test
 	public void testNegativeInvalidEmail3() throws Exception
 	{
@@ -111,8 +135,10 @@ class JwtAuthApplicationTests {
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
+				newStudent.getMessageResponse().getMessage());
 	}
+
 	@Test
 	public void testNegativeInvalidEmail4() throws Exception
 	{
@@ -120,8 +146,10 @@ class JwtAuthApplicationTests {
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
+				newStudent.getMessageResponse().getMessage());
 	}
+
 	@Test
 	public void testNegativeInvalidEmail5() throws Exception
 	{
@@ -129,7 +157,8 @@ class JwtAuthApplicationTests {
 		String password="dhsaj67$#LB1";
 		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
+				newStudent.getMessageResponse().getMessage());
 	}
 
 	//	User should NOT be able to register by entering existing / duplicate email.
@@ -142,7 +171,8 @@ class JwtAuthApplicationTests {
 		String password="ABcd@12";
 		User inputUser=new User(email, password);
 		User newStudent=userService.save(inputUser);
-		assertEquals(ResponseCode.USER_ALREADY_EXISTS.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.USER_ALREADY_EXISTS.getMessage() + inputUser.getUsername(),
+				newStudent.getMessageResponse().getMessage());
 	}
 
 	//	If password < 6 characters, user should NOT be able to register.
@@ -154,7 +184,8 @@ class JwtAuthApplicationTests {
 		String password="a@12A";
 		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.PASSWORD_SHORT.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.PASSWORD_SHORT.getMessage() + inputUser.getPassword(),
+				newStudent.getMessageResponse().getMessage());
 	}
 
 	//	If password > 100 charsacters, user should NOT be able to register. Should see message:
@@ -167,7 +198,8 @@ class JwtAuthApplicationTests {
 		String password="0123456qwertyABCD@#$0123456qwertyABCD@#$0123456qwertyABCD@#$0123456qwertyABCD@#$0123456qwertyABCD@#$x";
 		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
+				newStudent.getMessageResponse().getMessage());
 	}
 
 	//	If password does not contain characters [a-z], user should NOT be able to register: Message:
@@ -179,12 +211,14 @@ class JwtAuthApplicationTests {
 		String password = "ABCD@$123";
 		User inputUser = new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
+				newStudent.getMessageResponse().getMessage());
 	}
 
 	//	If password does not contain characters [A-Z], user should NOT be able to register: Message:
 	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
 	//	alphabet, number and special character!"
+
 	@Test
 	public void testNegativePasswordNotContainsCapsChar() throws Exception
 	{
@@ -192,7 +226,8 @@ class JwtAuthApplicationTests {
 		String password = "abcd@$123";
 		User inputUser = new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
+				newStudent.getMessageResponse().getMessage());
 	}
 
 	//	If password does not contain numerals [0-9], user should NOT be able to register: Message:
@@ -205,12 +240,14 @@ class JwtAuthApplicationTests {
 		String password = "abcdABCD@$";
 		User inputUser = new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
+				newStudent.getMessageResponse().getMessage());
 	}
 
 	//	If password does not contain special chars, user should NOT be able to register: Message:
 	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
 	//	alphabet, number and special character!"
+
 	@Test
 	public void testNegativePasswordNotContainsSpecialChar() throws Exception
 	{
@@ -218,7 +255,8 @@ class JwtAuthApplicationTests {
 		String password = "abcdABCD12";
 		User inputUser = new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
+				newStudent.getMessageResponse().getMessage());
 	}
 
 	//	User should be able to register by entering valid email and password.
@@ -232,7 +270,8 @@ class JwtAuthApplicationTests {
 		String password="Pinaki@12";
 		User inputUser=new User(email, password);
 		User newStudent = userService.save(inputUser);
-		assertEquals(ResponseCode.SUCCESS.getMessage(), newStudent.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.SUCCESS.getMessage() + inputUser.getUsername(),
+				newStudent.getMessageResponse().getMessage());
 	}
 
 //	*******************************************************************************

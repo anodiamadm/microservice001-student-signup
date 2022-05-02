@@ -26,16 +26,18 @@ class PermissionServiceDal extends PermissionServiceImpl {
                 permissionReturned = optionalPermission.get();
                 permissionReturned.setMessageResponse(new
                         MessageResponse(ResponseCode.PERMISSION_NAME_EXISTS.getID(),
-                        ResponseCode.PERMISSION_NAME_EXISTS.getMessage()));
+                        ResponseCode.PERMISSION_NAME_EXISTS.getMessage()
+                                + permissionReturned.getPermissionName()));
             } else {
                 permissionReturned.setMessageResponse(new
                         MessageResponse(ResponseCode.PERMISSION_NAME_INVALID.getID(),
-                        ResponseCode.PERMISSION_NAME_INVALID.getMessage()));
+                        ResponseCode.PERMISSION_NAME_INVALID.getMessage()
+                                + permissionReturned.getPermissionName()));
             }
         } catch(Exception exception) {
             exception.printStackTrace();
             permissionReturned.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                    ResponseCode.FAILURE.getMessage()));
+                    ResponseCode.FAILURE.getMessage() + exception.getMessage()));
         }
         return Optional.of(permissionReturned);
     }
