@@ -30,8 +30,7 @@ class RoleServiceDal extends RoleServiceImpl {
             } else {
                 roleReturned.setMessageResponse(new
                         MessageResponse(ResponseCode.ROLE_NAME_INVALID.getID(),
-                        ResponseCode.ROLE_NAME_INVALID.getMessage()
-                                + roleReturned.getRoleName()));
+                        ResponseCode.ROLE_NAME_INVALID.getMessage() + roleName));
             }
         } catch (Exception exception) {
             exception.printStackTrace();

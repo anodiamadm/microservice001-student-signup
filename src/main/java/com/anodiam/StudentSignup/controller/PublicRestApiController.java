@@ -19,12 +19,14 @@ public class PublicRestApiController {
 //  Register New user with username & password
     @PostMapping(value = "student-signup")
     public ResponseEntity<?> studentSignup(@RequestBody User student) throws Exception {
+        User studentToSignUp = new User();
         try
         {
-            User studentToSignUp = userService.save(student);
+            MessageResponse messageResponse = userService.save(student);
             return ResponseEntity.ok(new MessageResponse(studentToSignUp.getMessageResponse().getCode(),
                     studentToSignUp.getMessageResponse().getMessage()));
         }catch(Exception exception){
+            exception.printStackTrace();
             return ResponseEntity.ok(new MessageResponse(ResponseCode.FAILURE.getID(),
                     exception.getMessage()));
         }

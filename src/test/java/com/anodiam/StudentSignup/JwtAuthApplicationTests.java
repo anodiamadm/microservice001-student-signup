@@ -3,6 +3,7 @@ package com.anodiam.StudentSignup;
 import com.anodiam.StudentSignup.model.Permission;
 import com.anodiam.StudentSignup.model.Role;
 import com.anodiam.StudentSignup.model.User;
+import com.anodiam.StudentSignup.model.common.MessageResponse;
 import com.anodiam.StudentSignup.model.common.ResponseCode;
 import com.anodiam.StudentSignup.serviceRepository.Permission.PermissionService;
 import com.anodiam.StudentSignup.serviceRepository.Role.RoleService;
@@ -26,31 +27,19 @@ class JwtAuthApplicationTests {
 	@Autowired
 	private RoleService roleService;
 
-//*******************************************************************************************
-//	JUNIT TEST CASES for microservice001-student-signup Test Based Development Starts Here
-//*******************************************************************************************
-
-	//	User should NOT be able to register by entering invalid email.
-	//  1. Does not contain exactly one '@' character.
-	//  1.1 Contain 2 '@' characters.
-	//  2. Does not contain one or more '.' characters after the '@' character.
-	//  3. Does not contain any character before '@'.
-	//  4. Does not contain any character in between '@' and '.'.
-	//  5. Does not contain any alphabet (a-z, A-Z) after the last '.' character.
-	//  User should NOT be able to register. with the following message:
-	//	ERR: Microsvc001: Student Signup: Invalid Username / Email format used for Sign Up!
-
+	//	Role should not be fetched against invalid Role Name
 	@Test
-	public void testNegativeFindByInvalidRoleName() throws Exception
+	public void testNegativeFindRoleByInvalidRoleName() throws Exception
 	{
 		String roleName="INVALID_ROLE";
 		Role role = roleService.findByRoleName(roleName).get();
-		assertEquals(ResponseCode.ROLE_NAME_INVALID.getMessage() + role.getRoleName(),
+		assertEquals(ResponseCode.ROLE_NAME_INVALID.getMessage() + roleName,
 				role.getMessageResponse().getMessage());
 	}
 
+	//	Correct Role should be fetched against valid Role Name
 	@Test
-	public void testPositiveFindByValidRoleName() throws Exception
+	public void testPositiveFindRoleByValidRoleName() throws Exception
 	{
 		String roleName="USER";
 		Role role = roleService.findByRoleName(roleName).get();
@@ -58,18 +47,19 @@ class JwtAuthApplicationTests {
 				role.getMessageResponse().getMessage());
 	}
 
-
+	//	Permission should not be fetched against invalid Permission Name
 	@Test
-	public void testNegativeFindByInvalidPermissionName() throws Exception
+	public void testNegativeFindPermissionNameByInvalidPermissionName() throws Exception
 	{
 		String permissionName="INVALID_ACCESS";
 		Permission permission = permissionService.findByPermissionName(permissionName).get();
-		assertEquals(ResponseCode.PERMISSION_NAME_INVALID.getMessage()
-						+ permission.getPermissionName(), permission.getMessageResponse().getMessage());
+		assertEquals(ResponseCode.PERMISSION_NAME_INVALID.getMessage() + permissionName,
+				permission.getMessageResponse().getMessage());
 	}
 
+	//	Correct Permission should be fetched against valid Permission Name
 	@Test
-	public void testPositiveFindByValidPermissionName() throws Exception
+	public void testPositiveFindPermissionNameByValidPermissionName() throws Exception
 	{
 		String permissionName="STUDENT_ACCESS";
 		Permission permission = permissionService.findByPermissionName(permissionName).get();
@@ -77,8 +67,9 @@ class JwtAuthApplicationTests {
 						+ permission.getPermissionName(), permission.getMessageResponse().getMessage());
 	}
 
+	//	User should NOT be fetched against invalid Email
 	@Test
-	public void testNegativeFindByWrongEmail() throws Exception
+	public void testNegativeFindUserByWrongEmail() throws Exception
 	{
 		String email="invalidemail@gmail.com";
 		User foundUser = userService.findByUsername(email).get();
@@ -86,8 +77,9 @@ class JwtAuthApplicationTests {
 				foundUser.getMessageResponse().getMessage());
 	}
 
+	//	Correct User should be fetched against valid Email
 	@Test
-	public void testPositiveFindByCorrectEmail() throws Exception
+	public void testPositiveFindUserByCorrectEmail() throws Exception
 	{
 		String email="pinaki.sen@gmail.com";
 		User foundUser = userService.findByUsername(email).get();
@@ -95,172 +87,162 @@ class JwtAuthApplicationTests {
 				foundUser.getMessageResponse().getMessage());
 	}
 
+	//	User should NOT be able to register by entering invalid email
 	@Test
-	public void testNegativeInvalidEmail1() throws Exception
+	public void testNegativeSaveUserInvalidEmail1() throws Exception
 	{
 		String email="invalidemail.noAt.gmail.com";
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
+	//	User should NOT be able to register by entering invalid email
 	@Test
-	public void testNegativeInvalidEmail1_1() throws Exception
+	public void testNegativeSaveUserInvalidEmail1_1() throws Exception
 	{
 		String email="invalidemail.twoAts@gma@il.com";
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
+	//	User should NOT be able to register by entering invalid email
 	@Test
-	public void testNegativeInvalidEmail2() throws Exception
+	public void testNegativeSaveUserInvalidEmail2() throws Exception
 	{
 		String email="invalidemail.noDotAfterAt@gmail";
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
+	//	User should NOT be able to register by entering invalid email
 	@Test
-	public void testNegativeInvalidEmail3() throws Exception
+	public void testNegativeSaveUserInvalidEmail3() throws Exception
 	{
 		String email="@gmail.com";
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
+	//	User should NOT be able to register by entering invalid email
 	@Test
-	public void testNegativeInvalidEmail4() throws Exception
+	public void testNegativeSaveUserInvalidEmail4() throws Exception
 	{
 		String email="invalidemail.noCharacterBetweenAndDot@.com";
 		String password="dhsa67$#LB1";
 		User inputUser=new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
+	//	User should NOT be able to register by entering invalid email
 	@Test
-	public void testNegativeInvalidEmail5() throws Exception
+	public void testNegativeSaveUserInvalidEmail5() throws Exception
 	{
 		String email="invalidemail.noAlphabetAfterLastDot@gmail.99";
 		String password="dhsaj67$#LB1";
 		User inputUser=new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.EMAIL_FORMAT_INVALID.getMessage() + inputUser.getUsername(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
-	//	User should NOT be able to register by entering existing / duplicate email.
-	//	email id - pinaki.sen@gmail.com already exists
-	//	"ERR: Microsvc001: Student Signup: Username / Email used for Sign Up is already registered!".
+	//	User should NOT be able to register by entering existing / duplicate email
 	@Test
-	public void testNegativeDuplicateEmail() throws Exception
+	public void testNegativeSaveUserDuplicateEmail() throws Exception
 	{
 		String email="pinaki.sen@gmail.com";
 		String password="ABcd@12";
 		User inputUser=new User(email, password);
-		User newStudent=userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.USER_ALREADY_EXISTS.getMessage() + inputUser.getUsername(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
-	//	If password < 6 characters, user should NOT be able to register.
-	//	"ERR: Microsvc001: Student Signup: Password cannot be < 6 characters!"
+	//	If password < 6 characters, user should NOT be able to register
 	@Test
-	public void testNegativeShortPassword() throws Exception
+	public void testNegativeSaveUserShortPassword() throws Exception
 	{
 		String email="abcd.smallpassword@gmail.com";
 		String password="a@12A";
 		User inputUser=new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.PASSWORD_SHORT.getMessage() + inputUser.getPassword(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
-	//	If password > 100 charsacters, user should NOT be able to register. Should see message:
-	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
-	//	alphabet, number and special character!"
+	//	If password > 100 charsacters, user should NOT be able to register
 	@Test
-	public void testNegativeLongPassword() throws Exception
+	public void testNegativeSaveUserLongPassword() throws Exception
 	{
 		String email="abcd.bigpassword@gmail.com";
 		String password="0123456qwertyABCD@#$0123456qwertyABCD@#$0123456qwertyABCD@#$0123456qwertyABCD@#$0123456qwertyABCD@#$x";
 		User inputUser=new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
-	//	If password does not contain characters [a-z], user should NOT be able to register: Message:
-	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
-	//	alphabet, number and special character!"
+	//	If password does not contain characters [a-z], user should NOT be able to register
 	@Test
-	public void testNegativePasswordNotContainsSmallChar() throws Exception {
+	public void testNegativeSaveUserPasswordNotContainsSmallChar() throws Exception {
 		String email = "password.without.a-z@gmail.com";
 		String password = "ABCD@$123";
 		User inputUser = new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
-	//	If password does not contain characters [A-Z], user should NOT be able to register: Message:
-	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
-	//	alphabet, number and special character!"
-
+	//	If password does not contain characters [A-Z], user should NOT be able to register
 	@Test
-	public void testNegativePasswordNotContainsCapsChar() throws Exception
+	public void testNegativeSaveUserPasswordNotContainsCapsChar() throws Exception
 	{
 		String email = "password.without.A-Z@gmail.com";
 		String password = "abcd@$123";
 		User inputUser = new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
-	//	If password does not contain numerals [0-9], user should NOT be able to register: Message:
-	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
-	//	alphabet, number and special character!"
+	//	If password does not contain numerals [0-9], user should NOT be able to register
 	@Test
-	public void testNegativePasswordNotContainsNumericChar() throws Exception
+	public void testNegativeSaveUserPasswordNotContainsNumericChar() throws Exception
 	{
 		String email = "password.without.0-9@gmail.com";
 		String password = "abcdABCD@$";
 		User inputUser = new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
-	//	If password does not contain special chars, user should NOT be able to register: Message:
-	//	"ERR: Microsvc001: Student Signup: Password must be 6 to 100 characters long and contain capital
-	//	alphabet, number and special character!"
-
+	//	If password does not contain special chars, user should NOT be able to register
 	@Test
-	public void testNegativePasswordNotContainsSpecialChar() throws Exception
+	public void testNegativeSaveUserPasswordNotContainsSpecialChar() throws Exception
 	{
 		String email = "password.withoutSplChar@gmail.com";
 		String password = "abcdABCD12";
 		User inputUser = new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.PASSWORD_INVALID.getMessage() + inputUser.getPassword(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
-	//	User should be able to register by entering valid email and password.
-	//	Message: "SUCCESS: Microsvc001: Student Signup: Student registration successful!".
+	//	User should be able to register by entering valid email and password
 	@Test
 	public void testPositiveSuccessfulRegistration() throws Exception
 	{
@@ -269,9 +251,9 @@ class JwtAuthApplicationTests {
 		String email=preFixEmail.concat(".sen@gmail.com");
 		String password="Pinaki@12";
 		User inputUser=new User(email, password);
-		User newStudent = userService.save(inputUser);
+		MessageResponse messageResponse = userService.save(inputUser);
 		assertEquals(ResponseCode.SUCCESS.getMessage() + inputUser.getUsername(),
-				newStudent.getMessageResponse().getMessage());
+				messageResponse.getMessage());
 	}
 
 //	*******************************************************************************

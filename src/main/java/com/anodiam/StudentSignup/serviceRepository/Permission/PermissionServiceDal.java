@@ -31,8 +31,7 @@ class PermissionServiceDal extends PermissionServiceImpl {
             } else {
                 permissionReturned.setMessageResponse(new
                         MessageResponse(ResponseCode.PERMISSION_NAME_INVALID.getID(),
-                        ResponseCode.PERMISSION_NAME_INVALID.getMessage()
-                                + permissionReturned.getPermissionName()));
+                        ResponseCode.PERMISSION_NAME_INVALID.getMessage() + permissionName));
             }
         } catch(Exception exception) {
             exception.printStackTrace();

@@ -1,6 +1,7 @@
 package com.anodiam.StudentSignup.serviceRepository.User;
 
 import com.anodiam.StudentSignup.model.User;
+import com.anodiam.StudentSignup.model.common.MessageResponse;
 
 import java.util.Optional;
 
@@ -12,7 +13,7 @@ abstract class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User save(User user) {
+    public MessageResponse save(User user) {
         return new UserServiceDal().save(user);
     }
 }

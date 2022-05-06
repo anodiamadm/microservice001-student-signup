@@ -48,8 +48,7 @@ class UserServiceDal extends UserServiceImpl {
             } else {
                 userReturned.setMessageResponse(new
                         MessageResponse(ResponseCode.USER_NOT_REGISTERED.getID(),
-                        ResponseCode.USER_NOT_REGISTERED.getMessage()
-                                + username));
+                        ResponseCode.USER_NOT_REGISTERED.getMessage() + username));
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -60,26 +59,27 @@ class UserServiceDal extends UserServiceImpl {
     }
 
     @Override
-    public User save(User student)
+    public MessageResponse save(User student)
     {
+        MessageResponse messageResponse = new MessageResponse();
         try
         {
             if (!isValidEmail(student.getUsername())) {
-                student.setMessageResponse(new MessageResponse(ResponseCode.EMAIL_FORMAT_INVALID.getID(),
-                        ResponseCode.EMAIL_FORMAT_INVALID.getMessage()
-                                + student.getUsername()));
+                messageResponse.setCode(ResponseCode.EMAIL_FORMAT_INVALID.getID());
+                messageResponse.setMessage(ResponseCode.EMAIL_FORMAT_INVALID.getMessage()
+                        + student.getUsername());
             } else if (userRepository.findByUsername(student.getUsername()).isPresent()) {
-                student.setMessageResponse(new MessageResponse(ResponseCode.USER_ALREADY_EXISTS.getID(),
-                        ResponseCode.USER_ALREADY_EXISTS.getMessage()
-                                + student.getUsername()));
+                messageResponse.setCode(ResponseCode.USER_ALREADY_EXISTS.getID());
+                messageResponse.setMessage(ResponseCode.USER_ALREADY_EXISTS.getMessage()
+                        + student.getUsername());
             } else if(student.getPassword().length() < 6) {
-                student.setMessageResponse(new MessageResponse(ResponseCode.PASSWORD_SHORT.getID(),
-                        ResponseCode.PASSWORD_SHORT.getMessage()
-                                + student.getPassword()));
+                messageResponse.setCode(ResponseCode.PASSWORD_SHORT.getID());
+                messageResponse.setMessage(ResponseCode.PASSWORD_SHORT.getMessage()
+                        + student.getPassword());
             } else if (!isValidPassword(student.getPassword())) {
-                student.setMessageResponse(new MessageResponse(ResponseCode.PASSWORD_INVALID.getID(),
-                        ResponseCode.PASSWORD_INVALID.getMessage()
-                                + student.getPassword()));
+                messageResponse.setCode(ResponseCode.PASSWORD_INVALID.getID());
+                messageResponse.setMessage(ResponseCode.PASSWORD_INVALID.getMessage()
+                        + student.getPassword());
             } else {
                 String encodedPassword = passwordEncoder.encode(student.getPassword());
                 User studentToSave = new User(student.getUsername(), encodedPassword);
@@ -90,17 +90,15 @@ class UserServiceDal extends UserServiceImpl {
                 role_user.getUserList().add(studentToSave);
                 permission_user.getUserList().add(studentToSave);
                 userRepository.save(studentToSave);
-                studentToSave.setMessageResponse(new MessageResponse(ResponseCode.SUCCESS.getID(),
-                        ResponseCode.SUCCESS.getMessage()
-                                + student.getUsername()));
-                student = studentToSave;
+                messageResponse.setCode(ResponseCode.SUCCESS.getID());
+                messageResponse.setMessage(ResponseCode.SUCCESS.getMessage() + student.getUsername());
             }
         } catch (Exception exception) {
             exception.printStackTrace();
-            student.setMessageResponse(new MessageResponse(ResponseCode.FAILURE.getID(),
-                        ResponseCode.FAILURE.getMessage() + exception.getMessage()));
+            messageResponse.setCode(ResponseCode.FAILURE.getID());
+            messageResponse.setMessage(ResponseCode.FAILURE.getMessage() + student.getUsername());
         }
-        return student;
+        return messageResponse;
     }
 
     private  static boolean isValidPassword(String password)
