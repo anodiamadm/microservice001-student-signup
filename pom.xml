@@ -93,5 +93,6 @@
 				<version>2.5.2</version>
 			</plugin>
 		</plugins>
+		<finalName>microservice001-student-signup</finalName>
 	</build>
 </project>
