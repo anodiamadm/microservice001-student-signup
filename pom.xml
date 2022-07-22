@@ -5,21 +5,18 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.2</version>
+		<version>2.7.2</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.anodiam.services</groupId>
-	<artifactId>StudentSignup</artifactId>
+	<groupId>com.anodiam</groupId>
+	<artifactId>anodiam-login-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>StudentSignup</name>
-	<description>Student Signup REST API</description>
+	<name>anodiam-login-service</name>
+	<description>Anodiam Login Service</description>
 	<packaging>jar</packaging>
 	<properties>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<java.version>1.8</java.version>
-		<spring-cloud.version>2020.0.3</spring-cloud.version>
+		<java.version>11</java.version>
 	</properties>
 
 	<dependencies>
@@ -27,10 +24,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
 		</dependency>
 
 		<!--Google Cloud-->
@@ -40,23 +33,18 @@
 			<version>3.1.0</version>
 		</dependency>
 
-		<!--  MySQL  -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
+		<!-- PostgreSQL -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.4.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
+
 
 		<!--  Security  -->
 		<dependency>
@@ -79,29 +67,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClassPath>true</addClassPath>
-							<mainClass>com.anodiam.StudentSignup.StudentSignupApplication</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<finalName>microservice001-student-signup</finalName>
 	</build>
 </project>
